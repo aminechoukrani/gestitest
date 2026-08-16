@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestiTest — Passation Multi-Tests</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d1117;
+  --surface:  #161920;
+  --surface2: #1e2330;
+  --border:   #2a3040;
+  --accent:   #4f8ef7;
+  --accent2:  #7cb3ff;
+  --success:  #3ecf8e;
+  --warn:     #f7a34f;
+  --danger:   #f75f5f;
+  --text:     #e8eaf0;
+  --text2:    #8892a4;
+  --radius:   12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Sora',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* Loader */
+#loader {
+  position:fixed; inset:0; background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:100; gap:16px;
+}
+.spinner {
+  width:40px; height:40px;
+  border:3px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Login */
+#login-screen {
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; padding:24px;
+}
+.login-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:40px 36px;
+  width:100%; max-width:420px;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+}
+.login-logo {
+  display:flex; align-items:center; gap:12px; margin-bottom:32px;
+}
+.login-logo-icon {
+  width:44px; height:44px;
+  background:linear-gradient(135deg,#4f8ef7,#7cb3ff);
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+}
+.login-logo-text h1 { font-size:20px; font-weight:700; }
+.login-logo-text p { font-size:12px; color:var(--text2); margin-top:2px; }
+.form-group { margin-bottom:20px; }
+.form-group label {
+  display:block; font-size:12px; font-weight:600;
+  color:var(--text2); text-transform:uppercase; letter-spacing:.08em;
+  margin-bottom:8px;
+}
+.form-group input {
+  width:100%; padding:12px 16px;
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:var(--radius); color:var(--text);
+  font-family:'Sora',sans-serif; font-size:14px;
+  transition:border-color .2s;
+}
+.form-group input:focus {
+  outline:none; border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,142,247,.15);
+}
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 24px; border-radius:var(--radius);
+  font-family:'Sora',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; border:none; transition:all .2s;
+}
+.btn-primary {
+  background:var(--accent); color:#fff; width:100%;
+}
+.btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+.btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.btn-outline {
+  background:transparent; color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+.error-msg {
+  background:rgba(247,95,95,.1); border:1px solid rgba(247,95,95,.3);
+  border-radius:8px; padding:10px 14px; font-size:13px; color:var(--danger);
+  margin-top:16px; display:none;
+}
+
+/* Test Selection Screen */
+#test-select-screen {
+  display:none;
+  min-height:100vh;
+  background:var(--bg);
+  padding:32px 24px;
+}
+.test-select-container {
+  max-width:900px;
+  margin:0 auto;
+}
+.test-select-header {
+  margin-bottom:32px;
+  text-align:center;
+}
+.test-select-header h1 {
+  font-size:28px;
+  font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  margin-bottom:8px;
+}
+.test-select-header p {
+  color:var(--text2);
+  font-size:14px;
+}
+.student-info-bar {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 20px;
+  margin-bottom:28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.student-details {
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.student-details span {
+  font-size:13px;
+  color:var(--text2);
+}
+.student-details strong {
+  color:var(--text);
+  font-weight:600;
+}
+.logout-small {
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text2);
+  padding:6px 14px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.logout-small:hover {
+  border-color:var(--danger);
+  color:var(--danger);
+}
+.tests-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+  gap:20px;
+  margin-bottom:32px;
+}
+.test-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px;
+  transition:all .3s;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.test-card:hover:not(.disabled) {
+  transform:translateY(-4px);
+  border-color:var(--accent);
+  box-shadow:0 12px 40px rgba(0,0,0,.3);
+}
+.test-card.disabled {
+  opacity:0.6;
+  cursor:not-allowed;
+  transform:none;
+}
+.test-status {
+  position:absolute;
+  top:12px;
+  right:12px;
+  font-size:11px;
+  font-weight:700;
+  padding:4px 8px;
+  border-radius:20px;
+}
+.status-pending {
+  background:rgba(247,163,79,.15);
+  color:var(--warn);
+}
+.status-completed {
+  background:rgba(62,207,142,.15);
+  color:var(--success);
+}
+.status-not-started {
+  background:rgba(136,146,164,.15);
+  color:var(--text2);
+}
+.status-in-progress {
+  background:rgba(79,142,247,.15);
+  color:var(--accent);
+}
+.test-icon {
+  font-size:36px;
+  margin-bottom:12px;
+}
+.test-card h3 {
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+.test-card .test-desc {
+  font-size:13px;
+  color:var(--text2);
+  margin-bottom:12px;
+  line-height:1.5;
+}
+.test-meta {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  color:var(--text2);
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  margin-top:4px;
+}
+.test-badge {
+  background:rgba(79,142,247,.1);
+  padding:3px 8px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:600;
+  color:var(--accent);
+}
+.test-note {
+  color:var(--success);
+  font-weight:600;
+}
+.info-note {
+  background:rgba(62,207,142,.08);
+  border:1px solid rgba(62,207,142,.2);
+  border-radius:12px;
+  padding:14px 18px;
+  font-size:13px;
+  color:var(--text2);
+  text-align:center;
+}
+
+/* App Shell */
+#app { display:none; flex-direction:column; min-height:100vh; }
+header {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+.header-left { display:flex; align-items:center; gap:12px; }
+.header-logo {
+  width:32px; height:32px;
+  background:linear-gradient(135deg,#4f8ef7,#7cb3ff);
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+.header-title { font-size:15px; font-weight:600; }
+.back-to-tests {
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text2);
+  padding:6px 12px;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+  margin-right:8px;
+  font-family:'Sora',sans-serif;
+  transition:all .2s;
+}
+.back-to-tests:hover {
+  border-color:var(--accent);
+  color:var(--accent);
+}
+.header-right { display:flex; align-items:center; gap:12px; }
+.badge-filiere {
+  padding:4px 10px; border-radius:20px;
+  font-size:11px; font-weight:700; letter-spacing:.06em;
+}
+.badge-TCL { background:rgba(62,207,142,.15); color:var(--success); }
+.badge-TCS { background:rgba(79,142,247,.15); color:var(--accent); }
+.badge-version {
+  padding:4px 10px; border-radius:20px;
+  background:var(--bg); border:1px solid var(--border);
+  font-size:11px; font-weight:600; color:var(--text2);
+}
+.btn-logout {
+  background:transparent; border:1px solid var(--border);
+  color:var(--text2); border-radius:8px; padding:6px 12px;
+  font-size:12px; cursor:pointer; font-family:'Sora',sans-serif;
+  transition:all .2s;
+}
+.btn-logout:hover { border-color:var(--danger); color:var(--danger); }
+
+/* Progress & Questions */
+.progress-bar-wrap {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:10px 20px;
+}
+.progress-steps {
+  display:flex; align-items:center; gap:0;
+  max-width:600px; margin:0 auto;
+}
+.step {
+  display:flex; flex-direction:column; align-items:center; flex:1;
+  cursor:pointer;
+}
+.step-dot {
+  width:28px; height:28px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700;
+  border:2px solid var(--border);
+  background:var(--bg);
+  color:var(--text2);
+  transition:all .3s;
+}
+.step.active .step-dot {
+  border-color:var(--accent); background:var(--accent); color:#fff;
+}
+.step.done .step-dot {
+  border-color:var(--success); background:var(--success); color:#fff;
+}
+.step-label {
+  font-size:10px; color:var(--text2); margin-top:4px;
+  font-weight:500; white-space:nowrap;
+}
+.step.active .step-label { color:var(--accent); }
+.step.done .step-label { color:var(--success); }
+.step-line {
+  flex:1; height:2px;
+  background:var(--border);
+  margin:0; position:relative; top:-8px;
+  transition:background .3s;
+}
+.step-line.done { background:var(--success); }
+
+main {
+  flex:1; padding:24px 20px;
+  max-width:780px; margin:0 auto; width:100%;
+}
+.partie-header { margin-bottom:24px; }
+.partie-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 12px; border-radius:20px;
+  background:rgba(79,142,247,.1); border:1px solid rgba(79,142,247,.2);
+  color:var(--accent); font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.08em;
+  margin-bottom:10px;
+}
+.partie-title { font-size:20px; font-weight:700; margin-bottom:4px; }
+.partie-info { font-size:13px; color:var(--text2); }
+.bareme-total {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 10px; border-radius:20px;
+  background:rgba(247,163,79,.1); border:1px solid rgba(247,163,79,.2);
+  color:var(--warn); font-size:12px; font-weight:600;
+  margin-left:8px;
+}
+
+.data-table-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+  margin-bottom:24px;
+}
+.data-table-card h3 {
+  padding:12px 16px; font-size:13px; font-weight:600;
+  color:var(--text2); border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.data-table-wrap { overflow-x:auto; padding:12px; }
+.data-table {
+  width:100%; border-collapse:collapse; font-size:13px;
+}
+.data-table th {
+  background:var(--surface2); color:var(--text2);
+  padding:8px 12px; text-align:center;
+  font-size:11px; font-weight:700; letter-spacing:.06em;
+  border:1px solid var(--border);
+}
+.data-table td {
+  padding:8px 12px; border:1px solid var(--border);
+  text-align:center; color:var(--text);
+}
+.data-table td.empty-cell {
+  background:rgba(255,255,255,.02);
+  color:var(--border); font-style:italic; font-size:11px;
+}
+
+.question-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:16px;
+  transition:border-color .2s;
+  position:relative;
+  overflow:hidden;
+}
+.question-card::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--border);
+  transition:background .2s;
+}
+.question-card.answered::before { background:var(--success); }
+.question-meta {
+  display:flex; align-items:center; gap:8px; margin-bottom:12px;
+}
+.q-num {
+  width:24px; height:24px; border-radius:6px;
+  background:var(--surface2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:var(--text2);
+}
+.q-type {
+  padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.06em;
+}
+.q-type.qcm { background:rgba(247,163,79,.15); color:var(--warn); }
+.q-type.ouverte { background:rgba(62,207,142,.15); color:var(--success); }
+.q-type.pratique { background:rgba(79,142,247,.15); color:var(--accent); }
+.q-bareme {
+  margin-left:auto;
+  font-size:11px; color:var(--text2);
+}
+.q-bareme strong { color:var(--warn); }
+.question-enonce {
+  font-size:14px; line-height:1.6; margin-bottom:16px;
+  color:var(--text);
+}
+.qcm-options { display:flex; flex-direction:column; gap:8px; }
+.qcm-option {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 14px; border-radius:8px;
+  border:1px solid var(--border);
+  cursor:pointer; transition:all .2s;
+  background:var(--bg);
+}
+.qcm-option:hover { border-color:var(--accent); background:rgba(79,142,247,.05); }
+.qcm-option.selected {
+  border-color:var(--accent); background:rgba(79,142,247,.1);
+}
+.qcm-radio {
+  width:16px; height:16px; border-radius:50%;
+  border:2px solid var(--border); flex-shrink:0;
+  transition:all .2s; position:relative;
+}
+.qcm-option.selected .qcm-radio {
+  border-color:var(--accent); background:var(--accent);
+}
+.qcm-option.selected .qcm-radio::after {
+  content:''; position:absolute; inset:3px;
+  border-radius:50%; background:#fff;
+}
+.qcm-label { font-size:13px; }
+.answer-textarea {
+  width:100%; padding:12px 14px;
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:8px; color:var(--text);
+  font-family:'Sora',sans-serif; font-size:13px;
+  line-height:1.6; resize:vertical; min-height:80px;
+}
+.answer-textarea:focus {
+  outline:none; border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,142,247,.12);
+}
+.nav-footer {
+  position:sticky; bottom:0;
+  background:var(--surface); border-top:1px solid var(--border);
+  padding:12px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+}
+.nav-progress {
+  font-size:12px; color:var(--text2); text-align:center;
+  flex:1;
+}
+#submit-screen { display:none; padding:24px 20px; max-width:600px; margin:0 auto; }
+.submit-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:32px 28px; margin-bottom:20px;
+}
+.submit-card h2 { font-size:18px; font-weight:700; margin-bottom:8px; }
+.submit-card p { font-size:14px; color:var(--text2); line-height:1.6; }
+.summary-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px; margin:20px 0;
+}
+.summary-item {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:10px; padding:14px;
+}
+.summary-item .label { font-size:11px; color:var(--text2); margin-bottom:6px; }
+.summary-item .value { font-size:18px; font-weight:700; color:var(--accent); }
+.summary-item.warn .value { color:var(--warn); }
+.summary-item.ok .value { color:var(--success); }
+.btn-submit {
+  background:linear-gradient(135deg,var(--success),#2cb87a);
+  color:#fff; width:100%; padding:16px;
+  font-size:15px; font-weight:700;
+  border-radius:var(--radius); border:none;
+  cursor:pointer;
+}
+.btn-submit:hover { transform:translateY(-2px); }
+.btn-submit:disabled { opacity:.5; cursor:not-allowed; }
+#confirm-screen { display:none; align-items:center; justify-content:center; min-height:100vh; padding:24px; flex-direction:column; gap:24px; text-align:center; }
+.confirm-icon {
+  width:80px; height:80px; border-radius:50%;
+  background:linear-gradient(135deg,var(--success),#2cb87a);
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px;
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  from { transform:scale(0); opacity:0; }
+  to { transform:scale(1); opacity:1; }
+}
+.confirm-detail {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:16px 24px;
+  font-size:13px; color:var(--text2);
+}
+
+/* ANTI-TRICHE OVERLAY - FULLY RESTORED */
+#anticheat-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: #0d1117;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+}
+#anticheat-overlay.visible { display: flex; }
+#anticheat-overlay .icon { font-size: 48px; }
+#anticheat-overlay p {
+  font-family: 'Sora', sans-serif;
+  color: #f75f5f; font-size: 16px; font-weight: 600;
+  text-align: center; max-width: 300px;
+}
+#anticheat-overlay small {
+  font-family: 'Sora', sans-serif;
+  color: #8892a4; font-size: 12px; text-align: center;
+}
+
+@media (max-width:480px) {
+  .summary-grid { grid-template-columns:1fr; }
+  .tests-grid { grid-template-columns:1fr; }
+  .student-info-bar { flex-direction:column; align-items:flex-start; }
+}
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+#watermark-layer {
+  display: none;
+  position: fixed; inset: 0; z-index: 100;
+  pointer-events: none; overflow: hidden;
+}
+#watermark-layer.active { display: block; }
+.wm-text {
+  position: absolute; font-size: 12px; font-weight: 700;
+  color: rgba(180, 20, 20, 0.15); white-space: nowrap;
+  transform: rotate(-30deg); user-select: none;
+  font-family: 'Sora', sans-serif; letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div><p style="font-size:13px;color:var(--text2)">Chargement...</p></div>
+
+<!-- Login -->
+<div id="login-screen" style="display:none;">
+  <div class="login-card">
+    <div class="login-logo"><div class="login-logo-icon">📊</div><div class="login-logo-text"><h1>GestiTest</h1><p>Passation multi-tests</p></div></div>
+    <div class="form-group"><label>Numéro Massar</label><input type="text" id="input-massar" placeholder="Ex: G123456789" autocomplete="off"></div>
+    <div class="form-group"><label>Date de naissance</label><input type="date" id="input-ddn"></div>
+    <button class="btn btn-primary" id="btn-login" onclick="doLogin()"><span>Se connecter</span></button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- Test Selection Screen -->
+<div id="test-select-screen">
+  <div class="test-select-container">
+    <div class="test-select-header">
+      <h1>📚 Mes évaluations</h1>
+      <p>Sélectionne un test à passer</p>
+    </div>
+    <div class="student-info-bar" id="student-info-bar">
+      <div class="student-details" id="student-details"></div>
+      <button class="logout-small" onclick="confirmLogout()">Déconnexion</button>
+    </div>
+    <div class="tests-grid" id="tests-grid"></div>
+    <div class="info-note">💡 Les réponses sont sauvegardées automatiquement.</div>
+  </div>
+</div>
+
+<!-- App Shell -->
+<div id="app">
+  <header>
+    <div class="header-left">
+      <div class="header-logo">📊</div>
+      <div class="header-title" id="header-title">Test</div>
+    </div>
+    <div class="header-right">
+      <button class="back-to-tests" onclick="returnToTestSelection()">← Tous les tests</button>
+      <span class="badge-filiere" id="badge-filiere"></span>
+      <span class="badge-version" id="badge-version"></span>
+      <button class="btn-logout" onclick="confirmLogout()">Quitter</button>
+    </div>
+  </header>
+  <div class="progress-bar-wrap"><div class="progress-steps" id="progress-steps"></div></div>
+  <main id="main-content"></main>
+  <div class="nav-footer">
+    <button class="btn btn-outline" id="btn-prev" onclick="navPartie(-1)">← Précédent</button>
+    <div class="nav-progress" id="nav-info"></div>
+    <button class="btn btn-primary" id="btn-next" onclick="navPartie(1)">Suivant →</button>
+  </div>
+</div>
+
+  <div id="submit-screen"><div class="submit-card"><h2>📋 Vérification</h2><div class="summary-grid" id="summary-grid"></div><div id="missing-warn" style="display:none;background:rgba(247,163,79,.1);border-radius:8px;padding:12px;margin-bottom:16px;">⚠️ Questions sans réponse</div><button class="btn-submit" id="btn-final-submit" onclick="submitTest()">✅ Soumettre</button><button class="btn btn-outline" onclick="gotoCurrentPartie()" style="width:100%;margin-top:12px;">← Retour</button></div></div>
+<div id="confirm-screen" class="confirm-screen"><div class="confirm-icon">✅</div><h2>Test soumis !</h2><div class="confirm-detail" id="confirm-detail"></div><button class="btn btn-primary" onclick="returnToTestSelection()" style="margin-top:20px;">← Mes tests</button></div>
+
+<!-- ANTI-TRICHE OVERLAY -->
+<div id="anticheat-overlay">
+  <div class="icon" id="anticheat-icon">🚫</div>
+  <p id="anticheat-msg">Retourne sur ton test !</p>
+  <small id="anticheat-sub">Clique pour continuer.</small>
+  <div id="anticheat-counter" style="margin-top:8px;background:#f75f5f22;border-radius:8px;padding:6px 16px;color:#f75f5f;font-size:13px;font-family:'Sora',sans-serif;"></div>
+</div>
+<div id="watermark-layer"></div>
+
+<script>
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const API = {
+  login:     `${window.location.origin}/api/test/login`,
+  getTest:   `${window.location.origin}/api/test/get`,
+  saveResp:  `${window.location.origin}/api/test/save-response`,
+  submit:    `${window.location.origin}/api/test/submit`,
+  statuts:   `${window.location.origin}/api/test/statuts`,
+};
+
+let state = {
+  eleve: null,
+  availableTests: [],
+  currentTest: null,
+  currentSoumissionId: null,
+  questions: [],
+  parties: [],
+  reponses: {},
+  testStatuses: {}
+};
+
+let currentPartie = 0;
+let testActive = false;
+let alerteCount = 0;  // compteur global accessible partout
+
+// ============================================================
+// ANTI-TRICHE COMPLET — Desktop + Mobile
+// ============================================================
+(function() {
+  const overlay = document.getElementById('anticheat-overlay');
+  let warningCount = 0;
+  let testStarted = false;
+
+  // Activation via événement custom dispatché par startTest()
+  window.addEventListener('gestitest-started', () => { testStarted = true; });
+  window.addEventListener('gestitest-stopped', () => { testStarted = false; });
+
+  const ALERTE_CONFIG = {
+    'capture_ecran_printscreen': { icon:'📸', msg:'Capture d\'écran détectée !',       sub:'Cette tentative est enregistrée.' },
+    'capture_ecran_snipping':    { icon:'📸', msg:'Snipping Tool détecté !',            sub:'Cette tentative est enregistrée.' },
+    'quitter_application':       { icon:'⚠️', msg:'Retourne sur ton test !',            sub:'Quitter l\'application est interdit.' },
+    'changement_appli_mobile':   { icon:'⚠️', msg:'Retourne sur ton test !',            sub:'Le changement d\'application est enregistré.' },
+    'perte_focus':               { icon:'⚠️', msg:'Retourne sur ton test !',            sub:'Cette tentative est enregistrée.' },
+    'quitter_page':              { icon:'⚠️', msg:'Ne quitte pas la page !',            sub:'Cette tentative est enregistrée.' },
+    'devtools_f12':              { icon:'🔒', msg:'Outils de dev interdits !',          sub:'Cette tentative est enregistrée.' },
+    'devtools_inspect':          { icon:'🔒', msg:'Inspection interdite !',             sub:'Cette tentative est enregistrée.' },
+    'raccourci_interdit':        { icon:'🚫', msg:'Raccourci interdit !',               sub:'Cette tentative est enregistrée.' },
+    'ouverture_devtools':        { icon:'🔒', msg:'Action suspecte détectée !',         sub:'Cette tentative est enregistrée.' },
+  };
+
+  function showOverlay(type) {
+    if (!testStarted) return;
+    warningCount++;
+    alerteCount++;
+    const cfg = ALERTE_CONFIG[type] || { icon:'🚫', msg:'Action non autorisée !', sub:'Cette tentative est enregistrée.' };
+    document.getElementById('anticheat-icon').textContent = cfg.icon;
+    document.getElementById('anticheat-msg').textContent  = cfg.msg;
+    document.getElementById('anticheat-sub').textContent  = cfg.sub;
+    const ctr = document.getElementById('anticheat-counter');
+    if (ctr) ctr.textContent = '\u26a0 ' + alerteCount + ' alerte' + (alerteCount > 1 ? 's' : '') + ' enregistr\u00e9e' + (alerteCount > 1 ? 's' : '');
+    overlay.classList.add('visible');
+    // Envoyer alerte au dashboard
+    if (state.currentSoumissionId) {
+      fetch('/api/realtime/alerte', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          soumission_id: state.currentSoumissionId,
+          type_alerte:   type || 'tentative_triche',
+          details:       new Date().toLocaleTimeString('fr-FR')
+        })
+      }).catch(() => {});
+    }
+  }
+
+  function hideOverlay() { overlay.classList.remove('visible'); }
+  overlay.addEventListener('click',    hideOverlay);
+  overlay.addEventListener('touchend', hideOverlay);
+
+  // ── DESKTOP ──────────────────────────────────────────────
+
+  // Clic droit
+  document.addEventListener('contextmenu', e => { if (testActive) e.preventDefault(); });
+
+  // Copier/couper/coller
+  document.addEventListener('copy',  e => { if (testStarted) e.preventDefault(); });
+  document.addEventListener('cut',   e => { if (testStarted) e.preventDefault(); });
+  document.addEventListener('paste', e => { if (testStarted) e.preventDefault(); });
+
+  // Raccourcis clavier
+  document.addEventListener('keydown', e => {
+    if (!testStarted) return;
+    const k = e.key.toLowerCase();
+    if (k === 'f12') { e.preventDefault(); showOverlay('devtools_f12'); return false; }
+    if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) { e.preventDefault(); showOverlay('devtools_inspect'); return false; }
+    if (e.ctrlKey && ['u','s','p'].includes(k)) { e.preventDefault(); showOverlay('raccourci_interdit'); return false; }
+    if (e.ctrlKey && e.shiftKey && k === 'r') { e.preventDefault(); return false; }
+  });
+
+  // PrintScreen via keyup (seule méthode fiable sur desktop)
+  document.addEventListener('keyup', async ev => {
+    if (!testStarted) return;
+    if (ev.key !== 'PrintScreen' && ev.code !== 'PrintScreen') return;
+    try { if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(''); } catch(e) {}
+    showOverlay('capture_ecran_printscreen');
+  });
+
+  // Perte de focus fenêtre (Alt+Tab desktop)
+  window.addEventListener('blur', () => {
+    if (!testStarted) return;
+    showOverlay('perte_focus');
+  });
+
+  // Visibilitychange (changement onglet desktop + changement app mobile)
+  // Fonctionne sur Android Chrome ET iOS Safari
+  document.addEventListener('visibilitychange', () => {
+    if (!testStarted) return;
+    if (document.visibilityState === 'hidden') {
+      showOverlay('quitter_application');
+    } else {
+      // Retour sur la page — cacher l'overlay après délai court
+      setTimeout(hideOverlay, 300);
+    }
+  });
+
+  // ── MOBILE ───────────────────────────────────────────────
+
+  // Bouton Home / changement d'app iOS + Android
+  // Sur iOS Safari, pagehide est l'événement le plus fiable
+  window.addEventListener('pagehide', () => {
+    if (testStarted) showOverlay('quitter_page');
+  });
+
+  // Page Lifecycle API — freeze = page mise en arrière-plan (iOS 13+)
+  window.addEventListener('freeze', () => {
+    if (testStarted) showOverlay('quitter_application');
+  });
+
+  // Redimensionnement suspect (devtools, changement orientation anormal)
+  window.addEventListener('resize', () => {
+    if (!testStarted) return;
+    const ratio = window.outerWidth / window.innerWidth;
+    if (ratio > 1.5) showOverlay('ouverture_devtools');
+  });
+
+  // Sélection de texte (appui long mobile)
+  document.addEventListener('selectstart', e => {
+    const tag = e.target.tagName.toLowerCase();
+    if (!['input','textarea'].includes(tag)) e.preventDefault();
+  });
+
+  // Filigrane visible (anti-photo mobile)
+  window.activateWatermark = function() {
+    const wm = document.getElementById('watermark-layer');
+    if (!wm || !state.eleve) return;
+    wm.innerHTML = '';
+    const txt = (state.eleve.nom || '') + ' ' + (state.eleve.prenom || '') + ' — ' + (state.eleve.massar || '');
+    for (let y = -100; y < window.innerHeight + 200; y += 110) {
+      for (let x = -100; x < window.innerWidth + 300; x += 260) {
+        const d = document.createElement('div');
+        d.className = 'wm-text';
+        d.textContent = txt;
+        d.style.left = x + 'px';
+        d.style.top  = y + 'px';
+        wm.appendChild(d);
+      }
+    }
+    wm.classList.add('active');
+  };
+  window.deactivateWatermark = function() {
+    const wm = document.getElementById('watermark-layer');
+    if (wm) { wm.classList.remove('active'); wm.innerHTML = ''; }
+  };
+
+  // Bloquer sélection texte globale
+  document.body.style.userSelect = 'none';
+  document.body.style.webkitUserSelect = 'none';
+
+  // Exposer setTestActive
+  window.setTestActive = (active) => {
+    testActive = active;  // garde la variable globale pour le reste du code
+    window.dispatchEvent(new CustomEvent(active ? 'gestitest-started' : 'gestitest-stopped'));
+  };
+})();
+// ============================================================
+// LOGIN
+// ============================================================
+async function doLogin() {
+  const massar = document.getElementById('input-massar').value.trim();
+  const ddn = document.getElementById('input-ddn').value;
+  const errEl = document.getElementById('login-error');
+  if (!massar || !ddn) { errEl.textContent = 'Remplis tous les champs.'; errEl.style.display='block'; return; }
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner" style="width:18px;height:18px;"></div>';
+  try {
+    const res = await fetch(API.login, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ massar, ddn }) });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Erreur');
+    state.eleve = data.eleve;
+    // Compatibilité : backend retourne ds_list (nouveau) ou tests (ancien)
+    const dsList = data.ds_list || data.tests || [];
+    state.availableTests = dsList.map(ds => ({
+      id: ds.test_id || ds.id,
+      soumission_id: ds.soumission_id,
+      module_id: ds.module_id,
+      version: ds.version,
+      titre: ds.titre || `DS${ds.module_id}`,
+      statut: ds.statut || ds.status || 'en_cours',
+      note: ds.note_finale || ds.note || null
+    }));
+    state.testStatuses = {};
+    state.availableTests.forEach(t => {
+      state.testStatuses[t.id] = { statut: t.statut, soumission_id: t.soumission_id, note: t.note };
+    });
+    sessionStorage.setItem('gestitest_session_v2', JSON.stringify({ eleve: state.eleve, availableTests: state.availableTests, testStatuses: state.testStatuses }));
+    hideLoader();
+    showTestSelection();
+  } catch(e) { errEl.textContent = e.message; errEl.style.display='block'; btn.disabled=false; btn.innerHTML='<span>Se connecter</span>'; }
+}
+
+function hideLoader() { document.getElementById('loader').style.display = 'none'; }
+function showTestSelection() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('submit-screen').style.display = 'none';
+  document.getElementById('confirm-screen').style.display = 'none';
+  document.getElementById('test-select-screen').style.display = 'block';
+  renderTestSelection();
+  window.setTestActive(false);
+}
+
+function renderTestSelection() {
+  const grid = document.getElementById('tests-grid');
+  const studentDiv = document.getElementById('student-details');
+  if (state.eleve) {
+    studentDiv.innerHTML = `<span>👤 <strong>${state.eleve.prenom} ${state.eleve.nom}</strong></span>
+                            <span>📚 ${state.eleve.classe || ''} • ${state.eleve.filiere || ''}</span>
+                            <span>🆔 ${state.eleve.massar || ''}</span>`;
+  }
+  if (!state.availableTests.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;background:var(--surface);border-radius:20px;">📭 Aucun test disponible.</div>`;
+    return;
+  }
+  grid.innerHTML = state.availableTests.map(test => {
+    const statut = test.statut || 'en_cours';
+    let statusClass = '', statusText = '';
+    if (statut === 'corrige') {
+      statusClass = 'status-completed'; statusText = '✅ Corrigé';
+    } else if (statut === 'soumis') {
+      statusClass = 'status-completed'; statusText = '✅ Soumis';
+    } else if (statut === 'en_cours') {
+      statusClass = 'status-in-progress'; statusText = '⏳ En cours';
+    } else {
+      statusClass = 'status-not-started'; statusText = '📝 À faire';
+    }
+    const noteDisplay = (statut === 'corrige' && test.note != null)
+      ? `<span class="test-note">📊 ${parseFloat(test.note).toFixed(1)}/20</span>` : '';
+    const disabled = (statut === 'soumis' || statut === 'corrige');
+    return `
+      <div class="test-card ${disabled ? 'disabled' : ''}" data-test-id="${test.id}" data-soumission-id="${test.soumission_id || ''}">
+        <div class="test-status ${statusClass}">${statusText}</div>
+        <div class="test-icon">📄</div>
+        <h3>${test.titre || `DS ${test.module_id || ''}`}</h3>
+        <div class="test-meta">
+          <span class="test-badge">Version ${test.version || '?'}</span>
+          ${noteDisplay || '<span>⚖️ /20</span>'}
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.querySelectorAll('.test-card:not(.disabled)').forEach(card => {
+    card.addEventListener('click', () => {
+      const testId = parseInt(card.dataset.testId);
+      const soumissionId = card.dataset.soumissionId;
+      startTest(testId, soumissionId);
+    });
+  });
+}
+
+async function startTest(testId, existingSoumissionId) {
+  if (!testId) return;
+  try {
+    const res = await fetch(`${API.getTest}?test_id=${testId}&eleve_id=${state.eleve.id}&soumission_id=${existingSoumissionId || ''}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    state.currentTest = data.test;
+    state.currentSoumissionId = data.soumission.id;
+    state.questions = data.questions;
+    state.reponses = data.reponses || {};
+    state.parties = ['cours', 'formules', 'graphiques'].filter(p => state.questions.some(q => q.partie === p));
+    state.testStatuses[testId] = { statut: 'en_cours', soumission_id: data.soumission.id };
+    sessionStorage.setItem('gestitest_session_v2', JSON.stringify({
+      eleve: state.eleve, availableTests: state.availableTests, testStatuses: state.testStatuses,
+      currentTestId: testId, currentSoumissionId: data.soumission.id
+    }));
+    document.getElementById('test-select-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    renderHeader();
+    currentPartie = 0;
+    renderPartie(currentPartie);
+    window.setTestActive(true);
+    alerteCount = 0;
+    document.getElementById('anticheat-counter').textContent = '';
+    window.activateWatermark();
+
+    // Ping dashboard toutes les 30s
+    if (window._pingInterval) clearInterval(window._pingInterval);
+    function sendPing() {
+      if (!testActive) return;
+      fetch('/api/realtime/ping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          soumission_id: state.currentSoumissionId,
+          eleve_nom:    state.eleve?.nom     || '',
+          eleve_prenom: state.eleve?.prenom  || '',
+          massar:       state.eleve?.massar  || '',
+          classe:       state.eleve?.classe  || '',
+          version:      state.currentTest?.version || 1
+        })
+      }).catch(() => {});
+    }
+    sendPing();
+    window._pingInterval = setInterval(sendPing, 30000);
+  } catch(e) { alert('Erreur: '+e.message); }
+}
+
+function renderHeader() {
+  document.getElementById('header-title').textContent = state.currentTest.titre || 'Test Tableur';
+  const bf = document.getElementById('badge-filiere');
+  bf.textContent = state.eleve?.filiere === 'TCS' ? 'TCS' : 'TCLSH';
+  bf.className = 'badge-filiere badge-' + (state.eleve?.filiere === 'TCS' ? 'TCS' : 'TCL');
+  document.getElementById('badge-version').textContent = `V${state.currentTest.version}`;
+}
+
+function renderPartie(idx) {
+  currentPartie = idx;
+  const partie = state.parties[idx];
+  const questions = state.questions.filter(q => q.partie === partie);
+  const main = document.getElementById('main-content');
+  const bareme = questions.reduce((s,q) => s + parseFloat(q.bareme), 0);
+  let html = `<div class="partie-header"><div class="partie-tag">📌 Partie ${idx+1}</div><h2 class="partie-title">${getPartieLabel(partie)}</h2><div class="partie-info">${questions.length} question(s) <span class="bareme-total">⚖️ ${bareme} pts</span></div></div>`;
+  
+  questions.forEach((q, i) => { html += renderQuestion(q, i, !!state.reponses[q.id]); });
+  main.innerHTML = html;
+  attachEvents(questions);
+  updateProgress();
+  updateNav();
+}
+
+function getPartieLabel(p) {
+  const map = { cours:'Questions de cours', formules:'Tableau & Formules', graphiques:'Graphiques' };
+  return map[p] || p;
+}
+
+function renderQuestion(q, idx, answered) {
+  if (q.type === 'qcm') {
+    const opts = JSON.parse(q.options || '[]');
+    return `<div class="question-card ${answered?'answered':''}" id="qcard-${q.id}"><div class="question-meta"><div class="q-num">${idx+1}</div><span class="q-type qcm">QCM</span><span class="q-bareme"><strong>${q.bareme}</strong> pt</span></div><div class="question-enonce">${escapeHtml(q.enonce)}</div><div class="qcm-options" data-qid="${q.id}">${opts.map(opt => `<div class="qcm-option" data-value="${escapeHtml(opt)}"><div class="qcm-radio"></div><span class="qcm-label">${escapeHtml(opt)}</span></div>`).join('')}</div></div>`;
+  } else {
+    return `<div class="question-card ${answered?'answered':''}" id="qcard-${q.id}"><div class="question-meta"><div class="q-num">${idx+1}</div><span class="q-type ${q.type}">${q.type==='pratique'?'Pratique':'Ouverte'}</span><span class="q-bareme"><strong>${q.bareme}</strong> pt</span></div><div class="question-enonce">${escapeHtml(q.enonce)}</div><textarea class="answer-textarea" data-qid="${q.id}" rows="${q.type==='pratique'?2:4}" placeholder="Ta réponse..."></textarea></div>`;
+  }
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+function attachEvents(questions) {
+  questions.forEach(q => {
+    if (q.type === 'qcm') {
+      const container = document.querySelector(`.qcm-options[data-qid="${q.id}"]`);
+      if (container) {
+        container.querySelectorAll('.qcm-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            container.querySelectorAll('.qcm-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            state.reponses[q.id] = opt.dataset.value;
+            saveResponse(q.id, opt.dataset.value);
+            updateCardState(q.id, true);
+          });
+        });
+        if (state.reponses[q.id]) {
+          const selected = container.querySelector(`.qcm-option[data-value="${CSS.escape(state.reponses[q.id])}"]`);
+          if (selected) selected.classList.add('selected');
+        }
+      }
+    } else {
+      const ta = document.querySelector(`textarea[data-qid="${q.id}"]`);
+      if (ta) {
+        if (state.reponses[q.id]) ta.value = state.reponses[q.id];
+        ta.addEventListener('input', () => {
+          state.reponses[q.id] = ta.value;
+          saveResponse(q.id, ta.value);
+          updateCardState(q.id, ta.value !== '');
+        });
+      }
+    }
+  });
+}
+
+function updateCardState(qid, answered) { const card = document.getElementById(`qcard-${qid}`); if(card) card.className = `question-card ${answered?'answered':''}`; }
+async function saveResponse(qid, val) {
+  try { await fetch(API.saveResp, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ soumission_id: state.currentSoumissionId, question_id: qid, reponse: val }) }); } catch(e) {}
+}
+
+function updateProgress() {
+  const stepsContainer = document.getElementById('progress-steps');
+  if(!stepsContainer) return;
+  let stepsHtml = '';
+  state.parties.forEach((p, i) => {
+    const qs = state.questions.filter(q => q.partie === p);
+    const answered = qs.filter(q => state.reponses[q.id] && state.reponses[q.id] !== '').length;
+    const done = answered === qs.length;
+    stepsHtml += `<div class="step ${done ? 'done' : (i===currentPartie ? 'active' : '')}" onclick="gotoPartie(${i})"><div class="step-dot">${i+1}</div><div class="step-label">${getPartieLabel(p).substring(0,10)}</div></div>`;
+    if(i < state.parties.length-1) stepsHtml += `<div class="step-line ${done ? 'done' : ''}"></div>`;
+  });
+  stepsContainer.innerHTML = stepsHtml;
+}
+
+function updateNav() {
+  const qs = state.questions.filter(q => q.partie === state.parties[currentPartie]);
+  const answered = qs.filter(q => state.reponses[q.id] && state.reponses[q.id] !== '').length;
+  document.getElementById('nav-info').innerHTML = `<strong>${answered}</strong>/${qs.length} réponses`;
+  document.getElementById('btn-prev').style.visibility = currentPartie === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = currentPartie === state.parties.length-1 ? 'Soumettre →' : 'Suivant →';
+}
+
+function navPartie(dir) {
+  const next = currentPartie + dir;
+  if (next < 0) return;
+  if (next >= state.parties.length) { gotoSubmit(); return; }
+  gotoPartie(next);
+}
+function gotoPartie(idx) { document.getElementById('submit-screen').style.display = 'none'; document.getElementById('main-content').style.display = 'block'; document.querySelector('.nav-footer').style.display = 'flex'; renderPartie(idx); window.scrollTo(0,0); }
+function gotoSubmit() { document.getElementById('main-content').style.display = 'none'; document.querySelector('.nav-footer').style.display = 'none'; document.getElementById('submit-screen').style.display = 'block'; renderSubmitSummary(); window.scrollTo(0,0); }
+function gotoCurrentPartie() { gotoPartie(currentPartie); }
+function renderSubmitSummary() {
+  const grid = document.getElementById('summary-grid');
+  let totalAnswered = 0, total = state.questions.length;
+  let html = '';
+  state.parties.forEach(p => {
+    const qs = state.questions.filter(q => q.partie === p);
+    const ans = qs.filter(q => state.reponses[q.id] && state.reponses[q.id] !== '').length;
+    totalAnswered += ans;
+    html += `<div class="summary-item ${ans===qs.length?'ok':'warn'}"><div class="label">${getPartieLabel(p)}</div><div class="value">${ans}/${qs.length}</div></div>`;
+  });
+  html += `<div class="summary-item ${totalAnswered===total?'ok':'warn'}"><div class="label">Total</div><div class="value">${totalAnswered}/${total}</div></div>`;
+  grid.innerHTML = html;
+  document.getElementById('missing-warn').style.display = totalAnswered < total ? 'block' : 'none';
+}
+
+async function submitTest() {
+  const btn = document.getElementById('btn-final-submit');
+  btn.disabled = true; btn.textContent = 'Soumission...';
+  try {
+    const res = await fetch(API.submit, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ soumission_id: state.currentSoumissionId }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+    // Mettre à jour le statut dans availableTests
+    const idx = state.availableTests.findIndex(t => t.id === state.currentTest.id);
+    if (idx !== -1) state.availableTests[idx].statut = 'soumis';
+    state.testStatuses[state.currentTest.id] = { statut: 'soumis', soumission_id: state.currentSoumissionId };
+
+    // Rafraîchir les statuts depuis le serveur
+    try {
+      const rS = await fetch(`${API.statuts}?eleve_id=${state.eleve.id}`);
+      const dS = await rS.json();
+      if (dS.statuts) {
+        dS.statuts.forEach(s => {
+          const t = state.availableTests.find(a => a.id === s.test_id);
+          if (t) { t.statut = s.statut; t.note = s.note_finale; }
+          state.testStatuses[s.test_id] = { statut: s.statut, soumission_id: s.soumission_id, note: s.note_finale };
+        });
+      }
+    } catch(e) {}
+
+    sessionStorage.setItem('gestitest_session_v2', JSON.stringify({ eleve: state.eleve, availableTests: state.availableTests, testStatuses: state.testStatuses }));
+    window.setTestActive(false);
+    window.deactivateWatermark();
+    if (window._pingInterval) { clearInterval(window._pingInterval); window._pingInterval = null; }
+    fetch('/api/realtime/soumis', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ soumission_id: state.currentSoumissionId }) }).catch(()=>{});
+    showTestSelection();
+  } catch(e) { alert('Erreur: '+e.message); btn.disabled=false; btn.textContent='✅ Soumettre mon test'; }
+}
+
+function returnToTestSelection() {
+  if(confirm('Retourner à la liste des tests ? Les réponses non soumises sont sauvegardées.')) {
+    window.setTestActive(false);
+    window.deactivateWatermark();
+    if (window._pingInterval) { clearInterval(window._pingInterval); window._pingInterval = null; }
+    showTestSelection();
+  }
+}
+function confirmLogout() { if(confirm('Déconnexion ?')) window.location.reload(); }
+
+window.addEventListener('beforeunload', (e) => {
+  if (!testActive) return;
+  e.preventDefault();
+  e.returnValue = 'Ton test est en cours. Tes réponses sont sauvegardées.';
+});
+
+setTimeout(() => {
+  hideLoader();
+  document.getElementById('login-screen').style.display = 'flex';
+}, 600);
+</script>
+</body>
+</html>

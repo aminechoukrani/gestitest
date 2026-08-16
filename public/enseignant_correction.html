@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GestiTest — Correction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161920;
+      --surface2: #1e2330;
+      --border: #2a3040;
+      --accent: #4f8ef7;
+      --accent2: #7cb3ff;
+      --success: #3ecf8e;
+      --warn: #f7a34f;
+      --danger: #f75f5f;
+      --text: #e8eaf0;
+      --text2: #8892a4;
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f8ef7, #7cb3ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .sidebar-logo h1 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .sidebar-logo p {
+      font-size: 10px;
+      color: var(--text2);
+    }
+
+    nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text2);
+      padding: 8px 8px 4px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text2);
+      transition: all .2s;
+      margin-bottom: 2px;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: rgba(79, 142, 247, .15);
+      color: var(--accent);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(247, 163, 79, .2);
+      color: var(--warn);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-card {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .user-name {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .user-role {
+      font-size: 10px;
+      color: var(--text2);
+    }
+
+    .main {
+      flex: 1;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 11px;
+    }
+
+    .page {
+      padding: 24px;
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Styles pour la section temps réel */
+    .live-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .live-header {
+      padding: 12px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .live-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .live-count {
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .live-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .live-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+      transition: all .2s;
+    }
+
+    .live-card.has-alerte {
+      border-color: var(--danger);
+    }
+
+    .live-card.soumis {
+      opacity: 0.6;
+    }
+
+    .live-alerte-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: #fff;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .live-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .live-card-info {
+      font-size: 11px;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+
+    .live-card-time {
+      font-size: 10px;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    .live-alerte-list {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 10px;
+    }
+
+    .live-alerte-item {
+      color: var(--danger);
+      padding: 2px 0;
+    }
+
+    .live-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .live-empty {
+      padding: 40px;
+      text-align: center;
+      color: var(--text2);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+
+    .stat-card.accent .stat-value {
+      color: var(--accent);
+    }
+
+    .stat-card.success .stat-value {
+      color: var(--success);
+    }
+
+    .stat-card.warn .stat-value {
+      color: var(--warn);
+    }
+
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .filter-select {
+      padding: 7px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .search-input {
+      padding: 7px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: var(--surface2);
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(42, 48, 64, .5);
+      transition: background .15s;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--surface2);
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .badge-soumis {
+      background: rgba(79, 142, 247, .15);
+      color: var(--accent);
+    }
+
+    .badge-corrige {
+      background: rgba(62, 207, 142, .15);
+      color: var(--success);
+    }
+
+    .badge-en_cours {
+      background: rgba(247, 163, 79, .15);
+      color: var(--warn);
+    }
+
+    .badge-TCLSH {
+      background: rgba(62, 207, 142, .12);
+      color: var(--success);
+    }
+
+    .badge-TCS {
+      background: rgba(79, 142, 247, .12);
+      color: var(--accent);
+    }
+
+    #correction-panel {
+      display: none;
+    }
+
+    .correction-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+    }
+
+    @media(max-width:900px) {
+      .correction-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profil-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .profil-card-header {
+      padding: 14px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profil-card-header h3 {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .profil-body {
+      padding: 16px;
+    }
+
+    .profil-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(42, 48, 64, .5);
+      font-size: 12px;
+    }
+
+    .profil-stat:last-child {
+      border-bottom: none;
+    }
+
+    .profil-stat .label {
+      color: var(--text2);
+    }
+
+    .profil-stat .value {
+      font-weight: 600;
+    }
+
+    .comportement-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .comportement-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .5s;
+    }
+
+    .q-correction {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+
+    .q-correction-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .q-c-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text2);
+      flex-shrink: 0;
+    }
+
+    .q-c-enonce {
+      font-size: 13px;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .q-c-bareme {
+      font-size: 11px;
+      color: var(--text2);
+      white-space: nowrap;
+    }
+
+    .q-c-bareme strong {
+      color: var(--warn);
+    }
+
+    .answer-box {
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .eleve-answer {
+      background: rgba(79, 142, 247, .08);
+      border: 1px solid rgba(79, 142, 247, .2);
+      color: var(--text);
+    }
+
+    .correct-answer {
+      background: rgba(62, 207, 142, .08);
+      border: 1px solid rgba(62, 207, 142, .2);
+      color: var(--success);
+      font-size: 12px;
+    }
+
+    .answer-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 4px;
+    }
+
+    .answer-label.eleve {
+      color: var(--accent2);
+    }
+
+    .answer-label.correct {
+      color: var(--success);
+    }
+
+    .note-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .note-input {
+      width: 70px;
+      padding: 7px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .note-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .note-max {
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    .q-comment-input {
+      width: 100%;
+      padding: 8px 12px;
+      margin-top: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      resize: none;
+    }
+
+    .q-comment-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn-note-preset {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text2);
+      font-family: 'Sora', sans-serif;
+      transition: all .2s;
+    }
+
+    .btn-note-preset:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .note-totale-card {
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .note-totale-label {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+
+    .note-totale-value {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .note-totale-max {
+      font-size: 16px;
+      color: var(--text2);
+    }
+
+    .note-partie-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(42, 48, 64, .5);
+    }
+
+    .note-partie-row:last-child {
+      border-bottom: none;
+    }
+
+    .partie-sep {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0 8px;
+      margin-bottom: 4px;
+    }
+
+    .partie-sep-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text2);
+      white-space: nowrap;
+    }
+
+    .partie-sep-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--text2);
+    }
+
+    .empty-state .icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .ia-badge {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(79, 142, 247, .06);
+      border: 1px solid rgba(79, 142, 247, .15);
+      border-radius: 8px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-ens"
+    style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px;">
+    <div
+      style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,.5);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+        <div
+          style="width:44px;height:44px;background:linear-gradient(135deg,#4f8ef7,#7cb3ff);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;">
+          📊</div>
+        <div>
+          <div style="font-size:20px;font-weight:700;">GestiTest</div>
+          <div style="font-size:12px;color:var(--text2);">Espace enseignant</div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label
+          style="display:block;font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Email</label>
+        <input type="email" id="ens-email" placeholder="votre@email.com"
+          style="width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+      <div style="margin-bottom:24px;">
+        <label
+          style="display:block;font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Mot
+          de passe</label>
+        <input type="password" id="ens-password" placeholder="••••••••"
+          style="width:100%;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:14px;"
+          onkeydown="if(event.key==='Enter')loginEnseignant()">
+      </div>
+      <button onclick="loginEnseignant()" id="btn-ens-login"
+        style="width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">
+        Se connecter
+      </button>
+      <div id="ens-error"
+        style="display:none;margin-top:14px;background:rgba(247,95,95,.1);border:1px solid rgba(247,95,95,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--danger);">
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="layout" id="main-layout" style="display:none;">
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">📊</div>
+        <div>
+          <h1>GestiTest</h1>
+          <p>Correction</p>
+        </div>
+      </div>
+      <nav>
+        <div class="nav-section">Principal</div>
+        <button class="nav-item active" onclick="showPage('dashboard')">📊 Tableau de bord</button>
+        <button class="nav-item" onclick="showPage('soumissions')">📝 Soumissions <span class="nav-badge"
+            id="badge-pending">0</span></button>
+        <button class="nav-item" onclick="showPage('absents')">👻 Absents &amp; En cours <span class="nav-badge"
+            id="badge-encours" style="background:#e67e22;">0</span></button>
+        <button class="nav-item" onclick="showPage('auto-correction')">🤖 Correction auto</button>
+        <div class="nav-section">Exports CSV</div>
+        <button class="nav-item" onclick="exportCSV('')">📤 CSV notes — Toutes classes</button>
+        <button class="nav-item" onclick="exportCSVClasse()">📤 CSV notes — Par classe</button>
+        <button class="nav-item" onclick="exportComplet('')">📦 Export complet — Toutes classes</button>
+        <button class="nav-item" onclick="exportCompletClasse()">📦 Export complet — Par classe</button>
+        <div class="nav-section">Import</div>
+        <button class="nav-item" onclick="document.getElementById('import-csv-input').click()" style="color:var(--success);">
+          📥 Importer notes CSV
+        </button>
+        <input type="file" id="import-csv-input" accept=".csv" style="display:none" onchange="importNotesCsv(this)">
+        <div class="nav-section">PDF</div>
+        <button class="nav-item" onclick="showPage('pdf')">🖨️ Générer PDF</button>
+        <div class="nav-section">Compte</div>
+        <button class="nav-item" onclick="logout()" style="color:var(--danger);">🚪 Déconnexion</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">A</div>
+          <div>
+            <div class="user-name" id="user-nom">Enseignant</div>
+            <div class="user-role">Informatique</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-title" id="topbar-title">Tableau de bord</div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm" onclick="refreshData()">🔄 Actualiser</button>
+          <button class="btn btn-primary btn-sm" onclick="showPage('soumissions')">📝 Corriger</button>
+        </div>
+      </div>
+
+      <!-- PAGE DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+
+        <!-- Section temps réel -->
+        <div class="live-section">
+          <div class="live-header">
+            <div class="live-dot" id="live-dot"></div>
+            <span class="live-title">🟢 Élèves en train de passer</span>
+            <span class="live-count" id="live-count">0</span>
+            <button class="btn btn-outline btn-sm" style="margin-left:auto"
+              onclick="resetAllActive()" title="Réinitialiser tous les tests actifs">
+              🔄 Reset tous
+            </button>
+          </div>
+          <div id="live-grid" class="live-grid">
+            <div class="live-empty">Aucun élève connecté pour l'instant</div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card accent">
+            <div class="stat-label">Total soumissions</div>
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-sub">toutes classes</div>
+          </div>
+          <div class="stat-card warn">
+            <div class="stat-label">En attente</div>
+            <div class="stat-value" id="stat-pending">—</div>
+            <div class="stat-sub">à corriger</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-label">Corrigées</div>
+            <div class="stat-value" id="stat-done">—</div>
+            <div class="stat-sub">terminées</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Moyenne générale</div>
+            <div class="stat-value" id="stat-avg">—</div>
+            <div class="stat-sub">/20</div>
+          </div>
+          <div class="stat-card" style="border-color:rgba(247,95,95,.3)">
+            <div class="stat-label">Note minimale</div>
+            <div class="stat-value" id="stat-min" style="color:var(--danger)">—</div>
+            <div class="stat-sub">/20</div>
+          </div>
+          <div class="stat-card" style="border-color:rgba(62,207,142,.3)">
+            <div class="stat-label">Note maximale</div>
+            <div class="stat-value" id="stat-max" style="color:var(--success)">—</div>
+            <div class="stat-sub">/20</div>
+          </div>
+        </div>
+
+        <!-- Blocs DS dynamiques -->
+        <div id="ds-blocs-container" style="display:flex;gap:14px;margin:14px 0;flex-wrap:wrap;"></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Classe</th>
+                <th>DS</th>
+                <th>Filière</th>
+                <th>Soumissions</th>
+                <th>Corrigées</th>
+                <th>Moyenne /20</th>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-classes"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE SOUMISSIONS -->
+      <div class="page" id="page-soumissions">
+        <div class="filters">
+          <select class="filter-select" id="filter-classe" onchange="filterSoumissions()">
+            <option value="">Toutes les classes</option>
+          </select>
+          <select class="filter-select" id="filter-statut" onchange="filterSoumissions()">
+            <option value="">Tous statuts</option>
+            <option value="soumis">⏳ Soumis</option>
+            <option value="corrige">✅ Corrigé</option>
+            <option value="a_voir">👀 À voir</option>
+            <option value="refus_papier">📄 Passé sur papier (refus app)</option>
+          </select>
+          <select class="filter-select" id="filter-ds" onchange="filterSoumissions()" style="min-width:90px;">
+            <option value="">Tous les DS</option>
+            <option value="1">DS1 — Tableur</option>
+            <option value="2">DS2 — Réseaux</option>
+            <option value="3">DS3 — SE &amp; Texteur</option>
+            <option value="4">DS4 — Final</option>
+          </select>
+          <select class="filter-select" id="filter-filiere" onchange="filterSoumissions()">
+            <option value="">Toutes filières</option>
+            <option value="TCLSH">TCLSH</option>
+            <option value="TCS">TCS</option>
+          </select>
+          <input type="text" class="search-input" id="search-eleve" placeholder="🔍 Rechercher un élève…"
+            oninput="filterSoumissions()">
+          <select class="filter-select" id="sort-by" onchange="filterSoumissions()" style="min-width:130px;">
+            <option value="date_desc">📅 Date ↓ (récent)</option>
+            <option value="date_asc">📅 Date ↑ (ancien)</option>
+            <option value="classe_asc">🏫 Classe A→Z</option>
+            <option value="note_desc">📊 Note ↓</option>
+            <option value="note_asc">📊 Note ↑</option>
+            <option value="nom_asc">👤 Nom A→Z</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Élève</th>
+                <th>Classe</th>
+                <th>DS</th>
+                <th>Filière</th>
+                <th>Version</th>
+                <th>Soumis le</th>
+                <th>Statut</th>
+                <th>Note /20</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="soumissions-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE CORRECTION -->
+      <div class="page" id="page-correction">
+        <button class="btn btn-outline btn-sm" onclick="showPage('soumissions')" style="margin-bottom:16px;">←
+          Retour</button>
+        <div id="correction-panel">
+          <div class="correction-layout">
+            <div class="correction-main" id="correction-questions"></div>
+            <div class="correction-side">
+              <div class="note-totale-card">
+                <div class="note-totale-label">Note calculée</div>
+                <div><span class="note-totale-value" id="note-totale">0</span><span class="note-totale-max">/20</span>
+                </div>
+                <div style="margin-top:14px;font-size:12px;" id="notes-par-partie"></div>
+              </div>
+              <div class="profil-card">
+                <div class="profil-card-header"><span>👤</span>
+                  <h3>Profil GestiClasse</h3>
+                </div>
+                <div class="profil-body" id="profil-body"></div>
+              </div>
+              <button class="btn btn-success" style="width:100%;margin-bottom:8px;" onclick="saveCorrection()">💾
+                Enregistrer la note</button>
+              <button class="btn btn-outline" style="width:100%;" onclick="showPage('soumissions')">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE PDF -->
+      <!-- PAGE ABSENTS -->
+      <div class="page" id="page-absents">
+        <div style="max-width:900px;">
+
+          <!-- Filtre DS -->
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+            <span style="font-weight:700;font-size:15px;">👻 Absents &amp; En cours</span>
+            <select class="filter-select" id="absent-ds" onchange="loadAbsentsPage()" style="border-color:#e67e22;">
+              <option value="1">DS1 — Tableur</option>
+              <option value="2">DS2 — Réseaux</option>
+              <option value="3">DS3 — SE &amp; Texteur</option>
+              <option value="4">DS4 — Final</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="loadAbsentsPage()">🔄 Actualiser</button>
+          </div>
+
+          <!-- En cours (n'ont pas soumis) -->
+          <div class="table-wrap" style="margin-bottom:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);">
+              <span style="font-weight:700;color:#e67e22;">⚡ N'ont pas soumis (en cours)</span>
+              <span id="encours-count" style="font-size:12px;color:#e67e22;font-weight:600;"></span>
+            </div>
+            <table>
+              <thead><tr>
+                <th>Élève</th><th>Massar</th><th>Classe</th><th>Filière</th><th>V</th><th>Dernière activité</th><th>Action</th>
+              </tr></thead>
+              <tbody id="encours-list">
+                <tr><td colspan="7" style="text-align:center;color:#aaa;padding:20px;">Sélectionne un DS</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Absents (aucune soumission) -->
+          <div class="table-wrap">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);">
+              <span style="font-weight:700;color:#c0392b;">🚫 N'ont pas du tout passé</span>
+              <span id="absents-count" style="font-size:12px;color:#c0392b;font-weight:600;"></span>
+            </div>
+            <table>
+              <thead><tr>
+                <th>Élève</th><th>Massar</th><th>Classe</th><th>Filière</th>
+              </tr></thead>
+              <tbody id="absents-list">
+                <tr><td colspan="4" style="text-align:center;color:#aaa;padding:20px;">Sélectionne un DS</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PAGE CORRECTION AUTO -->
+      <div class="page" id="page-auto-correction">
+        <div style="max-width:700px;">
+          <div style="font-size:15px;font-weight:700;margin-bottom:16px;">🤖 Correction automatique par lot</div>
+
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;">Sélectionner les copies à corriger</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+              <select class="filter-select" id="auto-ds" style="min-width:160px;">
+                <option value="1">DS1 — Tableur</option>
+                <option value="2">DS2 — Réseaux</option>
+                <option value="3">DS3 — SE &amp; Texteur</option>
+                <option value="4">DS4 — Final</option>
+              </select>
+              <select class="filter-select" id="auto-classe">
+                <option value="">Toutes les classes</option>
+              </select>
+              <select class="filter-select" id="auto-filiere">
+                <option value="">Toutes filières</option>
+                <option value="TCLSH">TCLSH</option>
+                <option value="TCS">TCS</option>
+              </select>
+            </div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">
+              ⚠️ Seules les soumissions avec statut <b>Soumis</b> seront corrigées.<br>
+              QCM corrigés directement. Questions ouvertes : Mistral AI, sinon analyse de similarité textuelle.<br>
+              Tu pourras réviser chaque note manuellement après.
+            </div>
+            <button class="btn btn-primary" id="btn-auto-start" onclick="startAutoCorrection()">
+              🤖 Lancer la correction automatique
+            </button>
+          </div>
+
+          <div id="auto-progress-panel" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-weight:600;" id="auto-progress-label">Initialisation...</span>
+              <span id="auto-progress-count" style="font-size:13px;color:var(--text2);"></span>
+            </div>
+            <div style="background:var(--bg);border-radius:6px;height:12px;overflow:hidden;margin-bottom:12px;">
+              <div id="auto-progress-bar" style="background:var(--accent);height:100%;width:0%;transition:width .3s;border-radius:6px;"></div>
+            </div>
+            <div id="auto-log" style="max-height:300px;overflow-y:auto;font-size:11px;font-family:monospace;background:var(--bg);border-radius:6px;padding:10px;"></div>
+          </div>
+
+          <div id="auto-result" style="display:none;border-radius:10px;padding:16px;margin-top:16px;"></div>
+        </div>
+      </div>
+
+      <div class="page" id="page-pdf">
+        <div style="max-width:500px;">
+          <div class="table-wrap" style="padding:24px;">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">🖨️ Générer des PDF</h3>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">📄 Sujet du DS</div>
+                <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Sujet imprimable par version</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <select class="filter-select" id="pdf-filiere">
+                    <option value="TCLSH">TCLSH</option>
+                    <option value="TCS">TCS</option>
+                  </select>
+                  <select class="filter-select" id="pdf-version">
+                    <option value="1">V1</option>
+                    <option value="2">V2</option>
+                    <option value="3">V3</option>
+                    <option value="4">V4</option>
+                    <option value="5">V5</option>
+                    <option value="6">V6</option>
+                  </select>
+                  <button class="btn btn-primary btn-sm" onclick="generatePDF('sujet')">Générer</button>
+                </div>
+              </div>
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">📋 Fiches individuelles</div>
+                <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Une fiche par élève avec note + comportement. Laisser vide = toutes classes.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <select class="filter-select" id="pdf-classe-ind">
+                    <option value="">Toutes classes</option>
+                  </select>
+                  <button class="btn btn-primary btn-sm" onclick="generatePDF('fiches')">Générer</button>
+                </div>
+              </div>
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;">
+                <div style="font-size:13px;font-weight:600;margin-bottom:4px;">📊 Tableau récapitulatif</div>
+                <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">A4 paysage trié par note +
+                  statistiques</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <select class="filter-select" id="pdf-classe-recap">
+                    <option value="">Toutes classes</option>
+                  </select>
+                  <button class="btn btn-primary btn-sm" onclick="generatePDF('recap')">Générer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // Utilisation de l'origine actuelle pour les appels API
+    const API_BASE = window.location.origin;
+
+    // Couleurs par module DS (globale)
+    const DS_COLORS = ['#1a6fbf','#7b2d8b','#1a8a4a','#b5460a'];
+
+    const API = {
+      login: `${API_BASE}/api/enseignant/login`,
+      stats: `${API_BASE}/api/correction/stats`,
+      soumissions: `${API_BASE}/api/correction/soumissions`,
+      detail: `${API_BASE}/api/correction/soumission`,
+      saveCorrn: `${API_BASE}/api/correction/save`,
+      suggest: `${API_BASE}/api/correction/suggest`,
+      resetSoum:   `${API_BASE}/api/correction/reset`,
+      forceSubmit: `${API_BASE}/api/correction/force-submit`,
+      absents:     `${API_BASE}/api/correction/absents`,
+      changeVer: `${API_BASE}/api/correction/change-version`,
+      exportCSV: `${API_BASE}/api/correction/export-csv`,
+      exportComplet: `${API_BASE}/api/correction/export-complet`,
+      copie: `${API_BASE}/api/pdf/copie`,
+      importNotes: `${API_BASE}/api/correction/import-notes`,
+      rtStream: `${API_BASE}/api/realtime/stream`,
+      rtPing: `${API_BASE}/api/realtime/ping`,
+      rtAlerte: `${API_BASE}/api/realtime/alerte`,
+      rtSoumis: `${API_BASE}/api/realtime/soumis`,
+      pdf: `${API_BASE}/api/pdf`
+    };
+
+    let allSoumissions = [];
+    let currentSoumission = null;
+
+    // ── INIT ─────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('ens_logged')) {
+        showDashboard(sessionStorage.getItem('ens_nom') || 'Enseignant');
+      }
+    });
+
+    // ── LOGIN ─────────────────────────────────────────────────────
+    async function loginEnseignant() {
+      const email = document.getElementById('ens-email').value.trim();
+      const password = document.getElementById('ens-password').value;
+      const errEl = document.getElementById('ens-error');
+      const btn = document.getElementById('btn-ens-login');
+      errEl.style.display = 'none';
+
+      if (!email || !password) {
+        errEl.textContent = 'Remplis tous les champs.';
+        errEl.style.display = 'block';
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = 'Connexion…';
+
+      try {
+        const res = await fetch(API.login, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Identifiants incorrects');
+        sessionStorage.setItem('ens_logged', '1');
+        sessionStorage.setItem('ens_nom', data.nom);
+        showDashboard(data.nom);
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Se connecter';
+      }
+    }
+
+    function showDashboard(nom) {
+      document.getElementById('login-ens').style.display = 'none';
+      document.getElementById('main-layout').style.display = 'flex';
+      document.getElementById('user-nom').textContent = nom;
+      loadDashboard();
+      loadSoumissions();
+      startRealtime();
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      location.reload();
+    }
+
+    // ── NAVIGATION ────────────────────────────────────────────────
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const pageEl = document.getElementById('page-' + name);
+      if (pageEl) pageEl.classList.add('active');
+      const titles = { dashboard: 'Tableau de bord', soumissions: 'Soumissions', correction: 'Correction', pdf: 'Générer PDF', absents: 'Absents & En cours', 'auto-correction': 'Correction automatique' };
+      document.getElementById('topbar-title').textContent = titles[name] || '';
+      if (name === 'absents') loadAbsentsPage();
+    }
+
+    // ── DASHBOARD ─────────────────────────────────────────────────
+    async function loadDashboard() {
+      try {
+        const res = await fetch(API.stats);
+        const data = await res.json();
+        document.getElementById('stat-total').textContent = data.total || 0;
+        document.getElementById('stat-pending').textContent = data.pending || 0;
+        document.getElementById('stat-done').textContent = data.done || 0;
+        document.getElementById('stat-avg').textContent = data.avg ? parseFloat(data.avg).toFixed(1) : '—';
+        document.getElementById('stat-min').textContent = data.min ? parseFloat(data.min).toFixed(1) : '—';
+        document.getElementById('stat-max').textContent = data.max ? parseFloat(data.max).toFixed(1) : '—';
+        document.getElementById('badge-pending').textContent = data.pending || 0;
+
+        // Blocs DS dynamiques
+        const container = document.getElementById('ds-blocs-container');
+        if (container) {
+          container.innerHTML = '';
+          (data.parDS || []).forEach((ds, idx) => {
+            const n = ds.module_id;
+            const color = DS_COLORS[(n-1) % DS_COLORS.length];
+            const titre = ds.nom_module || `DS${n}`;
+            container.innerHTML += `
+              <div style="flex:1;min-width:220px;background:linear-gradient(135deg,${color},${color}cc);border-radius:12px;padding:14px 18px;color:white;">
+                <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-bottom:8px;">DS ${n} — ${titre}</div>
+                <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                  <div><div style="font-size:22px;font-weight:800;">${ds.total||0}</div><div style="font-size:11px;opacity:.75;">soumissions</div></div>
+                  <div><div style="font-size:22px;font-weight:800;">${ds.done||0}</div><div style="font-size:11px;opacity:.75;">corrigées</div></div>
+                  <div><div style="font-size:22px;font-weight:800;">${ds.avg?parseFloat(ds.avg).toFixed(1):'—'}</div><div style="font-size:11px;opacity:.75;">moy. /20</div></div>
+                  <div><div style="font-size:22px;font-weight:800;color:#f7b500;">${ds.min?parseFloat(ds.min).toFixed(1):'—'}</div><div style="font-size:11px;opacity:.75;">min</div></div>
+                  <div><div style="font-size:22px;font-weight:800;color:#3ecf8e;">${ds.max?parseFloat(ds.max).toFixed(1):'—'}</div><div style="font-size:11px;opacity:.75;">max</div></div>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('filter-ds').value='${n}';filterSoumissions();showPage('soumissions');"
+                  style="margin-top:10px;color:white;border-color:rgba(255,255,255,.4);font-size:11px;">
+                  Voir les copies DS${n} →
+                </button>
+              </div>`;
+          });
+        }
+
+        const tbody = document.getElementById('dashboard-classes');
+        if (data.classes && data.classes.length) {
+          tbody.innerHTML = data.classes.map(c => `
+        <tr>
+          <td><strong>${escapeHtml(c.classe)}</strong></td>
+          <td><span class="badge" style="background:${DS_COLORS[(c.module_id-1)%DS_COLORS.length]||'#555'};color:white;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;">DS${c.module_id||'?'}</span></td>
+          <td><span class="badge badge-${c.filiere}">${c.filiere}</span></td>
+          <td>${c.nb_soumissions}</td>
+          <td><span style="color:var(--success)">${c.nb_corriges}</span>/${c.nb_soumissions}</td>
+          <td><strong>${c.avg ? parseFloat(c.avg).toFixed(1) : '—'}</strong></td>
+          <td style="color:var(--danger)">${c.min || '—'}</td>
+          <td style="color:var(--success)">${c.max || '—'}</td>
+          <td><button class="btn btn-outline btn-sm" onclick="filterByClasse('${escapeHtml(c.classe)}')">Voir</button></td>
+        </tr>`).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="icon">📭</div><p>Aucune soumission pour le moment</p></div></td></tr>';
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // ── SOUMISSIONS ───────────────────────────────────────────────
+    async function loadSoumissions() {
+      try {
+        // Sauvegarder les filtres actuels avant rechargement
+        const savedFilters = {
+          classe:  document.getElementById('filter-classe')?.value  || '',
+          statut:  document.getElementById('filter-statut')?.value  || '',
+          filiere: document.getElementById('filter-filiere')?.value || '',
+          ds:      document.getElementById('filter-ds')?.value      || '',
+          search:  document.getElementById('search-eleve')?.value   || '',
+          sort:    document.getElementById('sort-by')?.value        || 'date_desc',
+        };
+
+        const res = await fetch(API.soumissions);
+        const data = await res.json();
+        allSoumissions = data.soumissions || [];
+
+        // Reconstruire le select des classes
+        const classes = [...new Set(allSoumissions.map(s => s.classe).filter(Boolean))].sort();
+        ['filter-classe', 'pdf-classe-ind', 'pdf-classe-recap', 'pdf-copies-classe', 'auto-classe'].forEach(id => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          const prev = savedFilters.classe;
+          sel.innerHTML = '<option value="">Toutes les classes</option>' +
+            classes.map(c => `<option value="${escapeHtml(c)}" ${c === prev ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
+        });
+
+        // Restaurer tous les filtres
+        const restoreVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+        restoreVal('filter-statut',  savedFilters.statut);
+        restoreVal('filter-filiere', savedFilters.filiere);
+        restoreVal('filter-ds',      savedFilters.ds);
+        restoreVal('sort-by',        savedFilters.sort);
+        if (savedFilters.search) document.getElementById('search-eleve').value = savedFilters.search;
+
+        // Appliquer les filtres restaurés
+        filterSoumissions();
+      } catch (e) { console.error(e); }
+    }
+
+    function renderSoumissions(list) {
+      const tbody = document.getElementById('soumissions-list');
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="icon">📭</div><p>Aucune soumission</p></div></td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map(s => {
+        const d = new Date(s.horodatage);
+        const dateStr = `${d.toLocaleDateString('fr-FR')} ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+        const noteBadge = s.note_finale !== null
+          ? `<strong style="color:${parseFloat(s.note_finale) >= 10 ? 'var(--success)' : 'var(--danger)'}">${parseFloat(s.note_finale).toFixed(1)}</strong>`
+          : '<span style="color:var(--text2)">—</span>';
+        const nomSafe = (s.prenom + ' ' + s.nom).replace(/'/g, "\\'");
+        return `<tr>
+      <td><strong>${escapeHtml(s.prenom)} ${escapeHtml(s.nom)}</strong><br><span style="font-size:11px;color:var(--text2)">${escapeHtml(s.massar)}</span></td>
+      <td>${escapeHtml(s.classe || '—')}</td>
+      <td><span class="badge" style="background:${DS_COLORS[(s.module_id-1)%DS_COLORS.length]||'#555'};color:white;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;">DS${s.module_id||'?'}</span></td>
+      <td><span class="badge badge-${s.filiere}">${s.filiere}</span></td>
+      <td>V${s.version}</td>
+      <td style="font-size:11px;color:var(--text2)">${dateStr}</td>
+      <td>
+        <span class="badge badge-${s.statut}">${s.statut}</span>
+        ${s.statut === 'corrige' && s.auto_corrige
+          ? '<span title="Corrigé automatiquement" style="font-size:10px;color:#8e44ad;margin-left:4px;">🤖</span>'
+          : ''}
+        ${s.statut === 'corrige' && !s.valide_par_enseignant
+          ? '<span title="Pas encore validée par toi" style="font-size:10px;background:#e67e22;color:white;border-radius:3px;padding:1px 5px;margin-left:4px;">👀 à voir</span>'
+          : ''}
+        ${s.refus_papier_signal && s.refus_papier_signal > 0
+          ? '<span title="Élève signale avoir passé ce DS sur papier" style="font-size:10px;background:#c0392b;color:white;border-radius:3px;padding:1px 5px;margin-left:4px;">📄 papier</span>'
+          : ''}
+      </td>
+      <td>
+        ${noteBadge}
+        ${s.statut === 'corrige'
+          ? `<span style="font-size:10px;color:var(--text2);margin-left:3px;">(${s.nb_notes||0}/${s.nb_questions||0})</span>`
+          : ''}
+      </td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-primary btn-sm" onclick="openCorrection(${s.id})">
+            ${s.statut === 'corrige' ? '👁 Voir' : '✏️ Corriger'}
+          </button>
+          <button class="btn btn-outline btn-sm" title="Réinitialiser le test"
+            style="color:var(--warn);border-color:var(--warn);"
+            onclick="resetSoumission(${s.id},'${nomSafe}')">
+            🔄
+          </button>
+          <button class="btn btn-outline btn-sm" title="Changer la version"
+            style="color:var(--accent2);border-color:var(--accent2);"
+            onclick="changeVersion(${s.id},'${nomSafe}',${s.version})">
+            V${s.version}
+          </button>
+          <button class="btn btn-outline btn-sm" title="Télécharger la copie PDF"
+            style="color:var(--success);border-color:var(--success);"
+            onclick="window.open('${API.copie}?soumission_id=${s.id}','_blank')">
+            📄
+          </button>
+        </div>
+      </td>
+    </tr>`;
+      }).join('');
+    }
+
+    function startAutoCorrection() {
+      const ds      = document.getElementById('auto-ds').value;
+      const classe  = document.getElementById('auto-classe').value;
+      const filiere = document.getElementById('auto-filiere').value;
+
+      if (!confirm(`Lancer la correction automatique pour DS${ds}${classe ? ' — ' + classe : ''}${filiere ? ' — ' + filiere : ''} ?\n\nSeules les soumissions "Soumis" seront traitées.\nTu pourras réviser les notes manuellement après.`)) return;
+
+      const btn = document.getElementById('btn-auto-start');
+      btn.disabled = true;
+      btn.textContent = '⏳ Correction en cours...';
+
+      const panel  = document.getElementById('auto-progress-panel');
+      const result = document.getElementById('auto-result');
+      const log    = document.getElementById('auto-log');
+      const bar    = document.getElementById('auto-progress-bar');
+      const label  = document.getElementById('auto-progress-label');
+      const count  = document.getElementById('auto-progress-count');
+
+      panel.style.display = 'block';
+      result.style.display = 'none';
+      log.innerHTML = '';
+      bar.style.background = 'var(--accent)';
+
+      let url = `${API_BASE}/api/correction/auto-batch?module_id=${ds}`;
+      if (classe)  url += `&classe=${encodeURIComponent(classe)}`;
+      if (filiere) url += `&filiere=${encodeURIComponent(filiere)}`;
+
+      const es = new EventSource(url);
+
+      es.onmessage = (e) => {
+        const d = JSON.parse(e.data);
+
+        if (d.type === 'start') {
+          label.textContent = `Correction de ${d.total} copies...`;
+          count.textContent = `0 / ${d.total}`;
+          log.innerHTML += `<div style="color:var(--accent)">▶ Démarrage — ${d.total} copies à corriger</div>`;
+        }
+        else if (d.type === 'progress') {
+          label.textContent = `Correction de ${d.eleve} (${d.classe})...`;
+          count.textContent = `${d.corrigees} / ${d.total}`;
+          bar.style.width = (d.corrigees / d.total * 100) + '%';
+        }
+        else if (d.type === 'corrige') {
+          const pct = Math.round(d.corrigees / d.total * 100);
+          bar.style.width = pct + '%';
+          count.textContent = `${d.corrigees} / ${d.total}`;
+          const color = d.note >= 10 ? '#2d7a2d' : d.note >= 5 ? '#e67e22' : '#c0392b';
+          log.innerHTML += `<div>✅ ${d.eleve} → <span style="color:${color};font-weight:bold">${d.note}/20</span></div>`;
+          log.scrollTop = log.scrollHeight;
+        }
+        else if (d.type === 'erreur') {
+          log.innerHTML += `<div style="color:#c0392b">❌ ${d.eleve} — ${d.message}</div>`;
+          log.scrollTop = log.scrollHeight;
+        }
+        else if (d.type === 'done') {
+          es.close();
+          bar.style.width = '100%';
+          bar.style.background = '#2d7a2d';
+          label.textContent = 'Correction terminée ✅';
+          count.textContent = `${d.corrigees} / ${d.total}`;
+
+          result.style.display = 'block';
+          result.style.background = d.erreurs > 0 ? 'rgba(230,126,34,.1)' : 'rgba(45,122,61,.1)';
+          result.style.border = '1px solid ' + (d.erreurs > 0 ? '#e67e22' : '#2d7a2d');
+          result.innerHTML = `
+            <div style="font-weight:700;font-size:14px;margin-bottom:6px;">
+              ${d.erreurs > 0 ? '⚠️' : '✅'} Correction terminée
+            </div>
+            <div style="font-size:13px;">
+              <b>${d.corrigees}</b> copies corrigées sur <b>${d.total}</b>
+              ${d.erreurs > 0 ? `<br><span style="color:#e67e22">${d.erreurs} erreur(s)</span>` : ''}
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick="showPage('soumissions');document.getElementById('filter-ds').value='${ds}';filterSoumissions();">
+                📝 Voir les copies
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="loadDashboard()">
+                📊 Tableau de bord
+              </button>
+            </div>`;
+
+          btn.disabled = false;
+          btn.textContent = '🤖 Lancer la correction automatique';
+          loadSoumissions();
+          loadDashboard();
+        }
+        else if (d.type === 'erreur_fatal') {
+          es.close();
+          log.innerHTML += `<div style="color:#c0392b;font-weight:bold">💥 Erreur fatale: ${d.message}</div>`;
+          btn.disabled = false;
+          btn.textContent = '🤖 Lancer la correction automatique';
+        }
+      };
+
+      es.onerror = () => {
+        es.close();
+        log.innerHTML += `<div style="color:#c0392b">❌ Connexion interrompue</div>`;
+        btn.disabled = false;
+        btn.textContent = '🤖 Lancer la correction automatique';
+      };
+    }
+
+    async function loadAbsentsPage() {
+      const ds = document.getElementById('absent-ds')?.value || '1';
+
+      // Charger les en_cours
+      try {
+        const res = await fetch(`${API_BASE}/api/correction/encours?module_id=${ds}`);
+        const data = await res.json();
+        const tbody = document.getElementById('encours-list');
+        document.getElementById('encours-count').textContent = `(${data.total || 0})`;
+        document.getElementById('badge-encours').textContent = data.total || 0;
+        if (!data.encours || !data.encours.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#2d7a2d;padding:16px;">✅ Tous ont soumis</td></tr>';
+        } else {
+          tbody.innerHTML = data.encours.map(e => {
+            const nomSafe = (e.prenom + ' ' + e.nom).replace(/'/g, "\'");
+            const date = e.horodatage ? new Date(e.horodatage).toLocaleString('fr-FR') : '—';
+            return `<tr>
+              <td><strong>${e.prenom} ${e.nom}</strong></td>
+              <td style="font-size:11px;color:var(--text2)">${e.massar}</td>
+              <td>${e.classe}</td>
+              <td><span class="badge badge-${e.filiere}">${e.filiere}</span></td>
+              <td>V${e.version}</td>
+              <td style="font-size:11px;color:var(--text2)">${date}</td>
+              <td>
+                <button class="btn btn-outline btn-sm" title="Forcer la soumission"
+                  style="color:#e67e22;border-color:#e67e22;"
+                  onclick="forceSubmitAndRefresh(${e.soumission_id},'${nomSafe}')">
+                  ⚡ Forcer
+                </button>
+              </td>
+            </tr>`;
+          }).join('');
+        }
+      } catch(err) {
+        document.getElementById('encours-list').innerHTML = '<tr><td colspan="7" style="color:red;padding:12px;">Erreur</td></tr>';
+      }
+
+      // Charger les absents
+      try {
+        const res2 = await fetch(`${API.absents}?module_id=${ds}`);
+        const data2 = await res2.json();
+        const tbody2 = document.getElementById('absents-list');
+        document.getElementById('absents-count').textContent = `(${data2.total || 0})`;
+        if (!data2.absents || !data2.absents.length) {
+          tbody2.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#2d7a2d;padding:16px;">✅ Tous ont passé ce DS</td></tr>';
+        } else {
+          tbody2.innerHTML = data2.absents.map(e => `<tr>
+            <td><strong>${e.prenom} ${e.nom}</strong></td>
+            <td style="font-size:11px;color:var(--text2)">${e.massar}</td>
+            <td>${e.classe}</td>
+            <td><span class="badge badge-${e.filiere}">${e.filiere}</span></td>
+          </tr>`).join('');
+        }
+      } catch(err) {
+        document.getElementById('absents-list').innerHTML = '<tr><td colspan="4" style="color:red;padding:12px;">Erreur</td></tr>';
+      }
+    }
+
+    async function forceSubmitAndRefresh(soumissionId, nomEleve) {
+      if (!confirm(`Forcer la soumission de ${nomEleve} ?\nSes réponses seront conservées.`)) return;
+      try {
+        const res = await fetch(API.forceSubmit, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumissionId })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        showToast('✅ Soumission forcée');
+        loadAbsentsPage();
+        loadSoumissions();
+        loadDashboard();
+      } catch(e) {
+        showToast('❌ ' + e.message, true);
+      }
+    }
+
+    function filterSoumissions() {
+      const classe  = document.getElementById('filter-classe').value;
+      const statut  = document.getElementById('filter-statut').value;
+      const filiere = document.getElementById('filter-filiere').value;
+      const ds      = document.getElementById('filter-ds').value;
+      const search  = document.getElementById('search-eleve').value.toLowerCase();
+      const sortBy  = document.getElementById('sort-by')?.value || 'date_desc';
+
+      let filtered = allSoumissions.filter(s => {
+        if (classe  && s.classe   !== classe)              return false;
+        if (statut === 'a_voir') {
+          if (s.statut !== 'corrige' || s.valide_par_enseignant) return false;
+        } else if (statut === 'refus_papier') {
+          if (!s.refus_papier_signal || s.refus_papier_signal == 0) return false;
+        } else if (statut && s.statut !== statut)          return false;
+        if (filiere && s.filiere  !== filiere)             return false;
+        if (ds      && String(s.module_id) !== ds)         return false;
+        if (search  && !`${s.prenom} ${s.nom} ${s.massar}`.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      // Tri
+      filtered.sort((a, b) => {
+        switch(sortBy) {
+          case 'date_asc':   return new Date(a.horodatage) - new Date(b.horodatage);
+          case 'date_desc':  return new Date(b.horodatage) - new Date(a.horodatage);
+          case 'classe_asc': return (a.classe||'').localeCompare(b.classe||'') || (a.nom||'').localeCompare(b.nom||'');
+          case 'note_desc':  return (parseFloat(b.note_finale)||0) - (parseFloat(a.note_finale)||0);
+          case 'note_asc':   return (parseFloat(a.note_finale)||0) - (parseFloat(b.note_finale)||0);
+          case 'nom_asc':    return (a.nom||'').localeCompare(b.nom||'') || (a.prenom||'').localeCompare(b.prenom||'');
+          default:           return new Date(b.horodatage) - new Date(a.horodatage);
+        }
+      });
+
+      renderSoumissions(filtered);
+    }
+
+    function filterByClasse(classe) {
+      showPage('soumissions');
+      document.getElementById('filter-classe').value = classe;
+      filterSoumissions();
+    }
+
+    // ── RESET & CHANGE VERSION ────────────────────────────────────
+    async function resetSoumission(soumissionId, nomEleve) {
+      if (!confirm(`Réinitialiser le test de ${nomEleve} ?\nToutes ses réponses seront supprimées et il pourra repasser le test.`)) return;
+      try {
+        const res = await fetch(API.resetSoum, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumissionId })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        showToast('✅ Test réinitialisé — l\'élève peut repasser');
+        loadSoumissions();
+        loadDashboard();
+      } catch (e) {
+        showToast('❌ ' + e.message, true);
+      }
+    }
+
+    async function changeVersion(soumissionId, nomEleve, versionActuelle) {
+      const v = prompt(`Nouvelle version pour ${nomEleve} (1 à 6)\nVersion actuelle : V${versionActuelle}`, versionActuelle);
+      if (!v) return;
+      const vNum = parseInt(v);
+      if (isNaN(vNum) || vNum < 1 || vNum > 6) {
+        showToast('❌ Version invalide (1 à 6)', true);
+        return;
+      }
+      if (vNum === versionActuelle) {
+        showToast('ℹ️ Même version, aucun changement');
+        return;
+      }
+      if (!confirm(`Changer vers V${vNum} pour ${nomEleve} ?\nSes réponses actuelles seront effacées.`)) return;
+      try {
+        const res = await fetch(API.changeVer, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumissionId, version: vNum })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        showToast(`✅ Version changée vers V${vNum}`);
+        loadSoumissions();
+      } catch (e) {
+        showToast('❌ ' + e.message, true);
+      }
+    }
+
+    // ── CORRECTION ────────────────────────────────────────────────
+    async function openCorrection(soumissionId) {
+      showPage('correction');
+      document.getElementById('correction-panel').style.display = 'none';
+      document.getElementById('correction-questions').innerHTML =
+        '<div style="text-align:center;padding:40px"><div class="spinner"></div></div>';
+
+      try {
+        const res = await fetch(`${API.detail}?id=${soumissionId}`);
+        const data = await res.json();
+        currentSoumission = data;
+        renderCorrection(data);
+        document.getElementById('correction-questions').insertAdjacentHTML('afterbegin', `
+      <div style="background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-size:13px;font-weight:600;">✨ Suggestions IA</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px;">Notes suggérées + similarité sémantique pour les questions ouvertes</div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-suggest" onclick="loadSuggestions(${soumissionId})">Analyser</button>
+      </div>`);
+        document.getElementById('correction-panel').style.display = 'block';
+      } catch (e) {
+        document.getElementById('correction-questions').innerHTML =
+          '<div class="empty-state"><div class="icon">❌</div><p>Erreur de chargement</p></div>';
+      }
+    }
+
+    function renderCorrection(data) {
+      const { soumission, eleve, questions, reponses, profil_gesticlasse } = data;
+      const comportPct = profil_gesticlasse ? (profil_gesticlasse.comportement / 20 * 100) : 0;
+      const compColor = comportPct >= 75 ? 'var(--success)' : comportPct >= 50 ? 'var(--warn)' : 'var(--danger)';
+
+      document.getElementById('profil-body').innerHTML = profil_gesticlasse ? `
+    <div class="profil-stat"><span class="label">Élève</span><span class="value">${escapeHtml(eleve.prenom)} ${escapeHtml(eleve.nom)}</span></div>
+    <div class="profil-stat"><span class="label">Classe</span><span class="value">${escapeHtml(eleve.classe)}</span></div>
+    <div class="profil-stat"><span class="label">DS</span><span class="value" style="background:${DS_COLORS[(soumission.module_id-1)%DS_COLORS.length]||'#555'};color:white;padding:2px 10px;border-radius:4px;font-weight:700;">DS${soumission.module_id||'?'} — ${soumission.titre||'Module '+soumission.module_id}</span></div>
+    <div class="profil-stat"><span class="label">Filière</span><span class="value">${escapeHtml(eleve.filiere)}</span></div>
+    <div class="profil-stat">
+      <span class="label">Comportement</span>
+      <span class="value" style="color:${compColor}">${profil_gesticlasse.comportement}/20</span>
+    </div>
+    <div class="comportement-bar">
+      <div class="comportement-fill" style="width:${comportPct}%;background:${compColor}"></div>
+    </div>
+    <div class="profil-stat">
+      <span class="label">Cahier</span>
+      <span class="value" style="color:${profil_gesticlasse.cahier_ok ? 'var(--success)' : 'var(--warn)'}">
+        ${profil_gesticlasse.cahier_ok ? '✅ Exercices faits' : '⚠️ Incomplet'}
+      </span>
+    </div>
+    ${profil_gesticlasse.proprete ? `<div class="profil-stat"><span class="label">Propreté</span><span class="value">${escapeHtml(profil_gesticlasse.proprete)}</span></div>` : ''}
+    ${profil_gesticlasse.remarques ? `<div style="margin-top:10px;padding:8px;background:var(--bg);border-radius:6px;font-size:11px;color:var(--text2)"><strong style="color:var(--text)">Remarques :</strong><br>${escapeHtml(profil_gesticlasse.remarques)}</div>` : ''}
+  ` : '<p style="font-size:12px;color:var(--text2)">Profil non disponible</p>';
+
+      const partiesLabels = { cours: 'Questions de cours', formules: 'Tableau & Formules', graphiques: 'Graphiques' };
+      const partiesIcons = { cours: '📖', formules: '📊', graphiques: '📈' };
+      let html = '';
+      let qNum = 0;
+
+      ['cours', 'formules', 'graphiques'].forEach(partie => {
+        const partiQs = questions.filter(q => q.partie === partie);
+        if (!partiQs.length) return;
+        html += `<div class="partie-sep"><div class="partie-sep-label">${partiesIcons[partie]} ${partiesLabels[partie]}</div><div class="partie-sep-line"></div></div>`;
+        partiQs.forEach(q => {
+          qNum++;
+          const rep = reponses.find(r => r.question_id === q.id);
+          const noteVal = rep && rep.note_attribuee != null ? rep.note_attribuee : '';
+          const commentVal = rep ? (rep.commentaire_correcteur || '') : '';
+          const isQCM = q.type === 'qcm';
+          const isCorrect = isQCM && rep && rep.reponse_eleve === q.reponse_correcte;
+
+          html += `
+        <div class="q-correction" id="qcorr-${q.id}">
+          <div class="q-correction-header">
+            <div class="q-c-num">${qNum}</div>
+            <div class="q-c-enonce">${escapeHtml(q.enonce)}</div>
+            <div class="q-c-bareme"><strong>${q.bareme}</strong> pt${q.bareme > 1 ? 's' : ''}</div>
+          </div>
+          <div class="answer-label eleve">Réponse élève</div>
+          <div class="answer-box eleve-answer">${isQCM && isCorrect ? '✅ ' : isQCM ? '❌ ' : ''}${escapeHtml(String(rep ? rep.reponse_eleve || '' : ''))}</div>
+          ${!isQCM
+              ? `<div class="answer-label correct">Réponse attendue</div><div class="answer-box correct-answer">${escapeHtml(q.reponse_correcte || '')}</div>`
+              : (!isCorrect ? `<div class="answer-box correct-answer"><span class="answer-label correct">Correcte :</span> ${escapeHtml(q.reponse_correcte || '')}</div>` : '')
+            }
+          <div class="note-input-row">
+            <label style="font-size:11px;color:var(--text2)">Note :</label>
+            <input type="number" class="note-input" id="note-${q.id}"
+              min="0" max="${q.bareme}" step="0.25"
+              value="${isQCM ? (isCorrect ? q.bareme : 0) : (noteVal !== '' ? noteVal : '')}"
+              onchange="updateNoteTotal()" ${isQCM ? 'readonly' : ''}>
+            <span class="note-max">/ ${q.bareme}</span>
+            ${!isQCM ? `
+              <button class="btn-note-preset" onclick="setNote(${q.id},0)">0</button>
+              <button class="btn-note-preset" onclick="setNote(${q.id},${q.bareme / 2})">${q.bareme / 2}</button>
+              <button class="btn-note-preset" onclick="setNote(${q.id},${q.bareme})">${q.bareme}</button>` : ''}
+          </div>
+          ${!isQCM ? `<textarea class="q-comment-input" rows="2" id="comment-${q.id}" placeholder="Commentaire (optionnel)…">${escapeHtml(commentVal)}</textarea>` : ''}
+        </div>`;
+        });
+      });
+
+      document.getElementById('correction-questions').innerHTML = html;
+      questions.filter(q => q.type === 'qcm').forEach(q => {
+        const rep = reponses.find(r => r.question_id === q.id);
+        const el = document.getElementById(`note-${q.id}`);
+        if (el) el.value = (rep && rep.reponse_eleve === q.reponse_correcte) ? q.bareme : 0;
+      });
+      updateNoteTotal();
+    }
+
+    // ── SUGGESTIONS IA ────────────────────────────────────────────
+    async function loadSuggestions(soumissionId) {
+      const btn = document.getElementById('btn-suggest');
+      btn.disabled = true;
+      btn.textContent = '⏳ Analyse…';
+
+      try {
+        const res = await fetch(API.suggest, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumissionId })
+        });
+        const data = await res.json();
+
+        Object.entries(data.suggestions).forEach(([qid, s]) => {
+          const input = document.getElementById(`note-${qid}`);
+          if (input && s.note !== null) {
+            input.value = s.note;
+            input.style.borderColor = 'var(--accent)';
+          }
+          const card = document.getElementById(`qcorr-${qid}`);
+          if (card) {
+            card.querySelector('.ia-badge') && card.querySelector('.ia-badge').remove();
+            const color = s.similarite >= 75 ? 'var(--success)' : s.similarite >= 40 ? 'var(--warn)' : 'var(--danger)';
+            card.insertAdjacentHTML('beforeend', `
+          <div class="ia-badge">
+            <span>✨ IA</span>
+            <span style="color:${color};font-weight:700;">${s.similarite}% similarité</span>
+            <span style="color:var(--text2);">→ ${escapeHtml(s.justification)}</span>
+            <span style="margin-left:auto;color:var(--accent);font-weight:600;">
+              Suggère : ${s.note}/${card.querySelector('.q-c-bareme strong') ? card.querySelector('.q-c-bareme strong').textContent : '?'}
+            </span>
+          </div>`);
+          }
+        });
+
+        updateNoteTotal();
+        btn.textContent = '✅ Analysé';
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Analyser';
+        showToast('❌ Erreur IA : ' + e.message, true);
+      }
+    }
+
+    // ── NOTE TOTAL ────────────────────────────────────────────────
+    function setNote(qid, val) {
+      document.getElementById(`note-${qid}`).value = val;
+      updateNoteTotal();
+    }
+
+    function updateNoteTotal() {
+      if (!currentSoumission) return;
+      const { questions } = currentSoumission;
+      let total = 0;
+      const parties = {};
+      questions.forEach(q => {
+        const input = document.getElementById(`note-${q.id}`);
+        if (!input) return;
+        const val = Math.min(Math.max(parseFloat(input.value) || 0, 0), parseFloat(q.bareme));
+        total += val;
+        parties[q.partie] = (parties[q.partie] || 0) + val;
+      });
+      total = Math.round(total * 100) / 100;
+      document.getElementById('note-totale').textContent = total.toFixed(1);
+      const labels = { cours: 'P1 Cours', formules: 'P2 Formules', graphiques: 'P3 Graphiques' };
+      document.getElementById('notes-par-partie').innerHTML = Object.entries(parties)
+        .map(([p, n]) => `<div class="note-partie-row"><span style="color:var(--text2)">${labels[p] || p}</span><span><strong>${n.toFixed(1)}</strong></span></div>`).join('');
+    }
+
+    // ── SAVE ─────────────────────────────────────────────────────
+    async function saveCorrection() {
+      if (!currentSoumission) return;
+      const { soumission, questions } = currentSoumission;
+      const corrections = questions.map(q => ({
+        question_id: q.id,
+        note: parseFloat(document.getElementById(`note-${q.id}`) ? document.getElementById(`note-${q.id}`).value : 0) || 0,
+        commentaire: document.getElementById(`comment-${q.id}`) ? document.getElementById(`comment-${q.id}`).value : ''
+      }));
+      const note_finale = corrections.reduce((s, c) => s + c.note, 0);
+
+      try {
+        const res = await fetch(API.saveCorrn, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumission.id, corrections, note_finale })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        showToast(`✅ Note enregistrée : ${note_finale.toFixed(1)}/20`);
+        loadDashboard();
+        loadSoumissions();
+        setTimeout(() => showPage('soumissions'), 1200);
+      } catch (e) {
+        showToast('❌ Erreur : ' + e.message, true);
+      }
+    }
+
+    // ── IMPORT NOTES CSV ─────────────────────────────────────────
+    async function importNotesCsv(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  try {
+    const text = await file.text();
+    const lines = text.replace(/\r/g, '').split('\n');
+
+    // Trouver la section 2
+    let sec2Start = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes('SECTION 2')) {
+        let j = i + 1;
+        while (j < lines.length && !lines[j].startsWith('Nom;')) j++;
+        sec2Start = j + 1;
+        break;
+      }
+    }
+    
+    if (sec2Start === -1) {
+      showToast('❌ Format CSV invalide — section 2 non trouvée', true);
+      return;
+    }
+
+    const correctionsBySoumission = {};
+    
+    for (let i = sec2Start; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line || line.startsWith(';;') || line.includes('SECTION')) continue;
+      
+      const cols = parseCSVLine(line);
+      if (cols.length < 12) continue;
+
+      const massar = cols[2]?.trim();
+      const version = parseInt(cols[3]?.replace('V', ''));
+      const qordre = parseInt(cols[5]);
+      const note = parseFloat(cols[10]);
+      const commentaire = cols[12]?.trim() || '';
+
+      if (!massar || isNaN(version) || isNaN(qordre) || isNaN(note)) continue;
+
+      const key = `${massar}_V${version}`;
+      if (!correctionsBySoumission[key]) {
+        correctionsBySoumission[key] = { massar, version, corrections: [] };
+      }
+      correctionsBySoumission[key].corrections.push({ question_ordre: qordre, note, commentaire });
+    }
+
+    if (Object.keys(correctionsBySoumission).length === 0) {
+      showToast('❌ Aucune donnée valide trouvée dans le CSV', true);
+      return;
+    }
+
+    const notesToSend = Object.values(correctionsBySoumission).map(item => {
+      const note_finale = item.corrections.reduce((s, c) => s + (parseFloat(c.note) || 0), 0);
+      return {
+        massar: item.massar,
+        version: item.version,
+        note_finale: Math.round(Math.min(note_finale, 20) * 100) / 100,
+        corrections: item.corrections
+      };
+    });
+
+    const res = await fetch(API.importNotes, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notes: notesToSend })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Erreur serveur');
+    
+    showToast(`✅ ${data.updated || notesToSend.length} copie(s) importée(s) avec succès`);
+    loadDashboard();
+    loadSoumissions();
+    
+  } catch (e) {
+    console.error('Import error:', e);
+    showToast('❌ Erreur import : ' + e.message, true);
+  }
+}
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ';' && !inQuotes) {
+          result.push(current);
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      result.push(current);
+      return result.map(v => v.replace(/^"|"$/g, ''));
+    }
+
+    // ============================================================
+    //  REALTIME — Surveillance temps réel
+    // ============================================================
+    let sseSource = null;
+    let activeStudentMap = {};
+
+    function startRealtime() {
+      if (sseSource) sseSource.close();
+      try {
+        sseSource = new EventSource(API.rtStream);
+        sseSource.onmessage = (e) => {
+          try {
+            const students = JSON.parse(e.data);
+            renderLiveGrid(students);
+          } catch (err) { console.error('SSE parse error:', err); }
+        };
+        sseSource.onerror = () => {
+          setTimeout(startRealtime, 3000);
+        };
+      } catch (e) {
+        console.error('SSE connection error:', e);
+      }
+    }
+
+    function renderLiveGrid(students) {
+      const grid = document.getElementById('live-grid');
+      const countEl = document.getElementById('live-count');
+      if (!grid) return;
+
+      activeStudentMap = {};
+      students.forEach(s => { activeStudentMap[s.soumission_id] = s; });
+
+      const active = students.filter(s => s.statut !== 'soumis');
+      countEl.textContent = active.length;
+
+      if (!students.length) {
+        grid.innerHTML = '<div class="live-empty">Aucun élève connecté pour l\'instant</div>';
+        return;
+      }
+
+      grid.innerHTML = students.map(s => {
+        const hasAlerte = s.nb_alertes > 0;
+        const isSubmit = s.statut === 'soumis';
+        const lastAct = s.derniere_activite ? timeSince(s.derniere_activite) : '—';
+        const alertesList = (s.alertes || []).slice(-3).map(a =>
+          '<div class="live-alerte-item">⚠ ' + escapeHtml(a.type) + ' — ' + timeSince(a.horodatage) + '</div>'
+        ).join('');
+
+        return '<div class="live-card' + (hasAlerte ? ' has-alerte' : '') + (isSubmit ? ' soumis' : '') + '">' +
+          (hasAlerte ? '<div class="live-alerte-badge">' + s.nb_alertes + '</div>' : '') +
+          '<div class="live-card-name">' + escapeHtml(s.eleve_prenom || '') + ' ' + escapeHtml(s.eleve_nom || '') + '</div>' +
+          '<div class="live-card-info">' + escapeHtml(s.classe || '—') + ' &nbsp;|&nbsp; V' + (s.version || '?') + '</div>' +
+          '<div class="live-card-time">' + (isSubmit ? '✓ Soumis' : '⏱ Actif il y a ' + lastAct) + '</div>' +
+          (hasAlerte ? '<div class="live-alerte-list">' + alertesList + '</div>' : '') +
+          '<div class="live-card-actions">' +
+          '<button class="btn btn-outline btn-sm" style="font-size:10px;padding:3px 8px;color:var(--warn);border-color:var(--warn);" ' +
+          'onclick="resetFromLive(' + s.soumission_id + ',\'' + escapeHtml((s.eleve_prenom || '') + ' ' + (s.eleve_nom || '')) + '\')" title="Réinitialiser le test">' +
+          '🔄 Reset' +
+          '</button>' +
+          '<button class="btn btn-outline btn-sm" style="font-size:10px;padding:3px 8px;color:var(--accent2);border-color:var(--accent2);" ' +
+          'onclick="changeVersionFromLive(' + s.soumission_id + ',\'' + escapeHtml((s.eleve_prenom || '') + ' ' + (s.eleve_nom || '')) + '\',' + (s.version || 1) + ')" title="Changer la version">' +
+          'V' + (s.version || '?') +
+          '</button>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    function timeSince(isoStr) {
+      const sec = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+      if (sec < 60) return sec + 's';
+      if (sec < 3600) return Math.floor(sec / 60) + 'min';
+      return Math.floor(sec / 3600) + 'h';
+    }
+
+    async function resetFromLive(soumissionId, nomEleve) {
+      if (!confirm('Réinitialiser le test de ' + nomEleve + ' ?\nIl pourra repasser.')) return;
+      try {
+        const r = await fetch(API.resetSoum, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumissionId })
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.message);
+        showToast('✅ Test de ' + nomEleve + ' réinitialisé');
+        loadSoumissions();
+      } catch (e) { showToast('❌ ' + e.message, true); }
+    }
+
+    async function changeVersionFromLive(soumissionId, nomEleve, versionActuelle) {
+      const v = prompt('Nouvelle version pour ' + nomEleve + ' (1 à 6)\nVersion actuelle : V' + versionActuelle, versionActuelle);
+      if (!v) return;
+      const vNum = parseInt(v);
+      if (isNaN(vNum) || vNum < 1 || vNum > 6) { showToast('❌ Version invalide (1 à 6)', true); return; }
+      if (vNum === versionActuelle) { showToast('ℹ️ Même version, aucun changement'); return; }
+      if (!confirm('Changer la version de ' + nomEleve + ' vers V' + vNum + ' ?\nSes réponses actuelles seront effacées.')) return;
+      try {
+        const r = await fetch(API.changeVer, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ soumission_id: soumissionId, version: vNum })
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.message);
+        showToast('✅ Version changée vers V' + vNum);
+        loadSoumissions();
+      } catch (e) { showToast('❌ ' + e.message, true); }
+    }
+
+    async function resetAllActive() {
+      const active = Object.values(activeStudentMap).filter(s => s.statut !== 'soumis');
+      if (!active.length) { showToast('Aucun élève actif'); return; }
+      if (!confirm('Réinitialiser les tests de ' + active.length + ' élève(s) actif(s) ?')) return;
+      let count = 0;
+      for (const s of active) {
+        try {
+          await fetch(API.resetSoum, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ soumission_id: s.soumission_id })
+          });
+          count++;
+        } catch (e) { }
+      }
+      showToast('✅ ' + count + ' test(s) réinitialisé(s)');
+      loadSoumissions();
+    }
+
+    // ── EXPORTS ───────────────────────────────────────────────────
+    function exportCSV(classeOverride) {
+      const classe = classeOverride !== undefined ? classeOverride
+        : (document.getElementById('filter-classe') ? document.getElementById('filter-classe').value : '');
+      window.location.href = API.exportCSV + '?classe=' + encodeURIComponent(classe);
+    }
+
+    function exportCSVClasse() {
+      const classe = promptClasse();
+      if (classe === null) return;
+      exportCSV(classe);
+    }
+
+    function exportComplet(classeOverride) {
+      const classe = classeOverride !== undefined ? classeOverride
+        : (document.getElementById('filter-classe') ? document.getElementById('filter-classe').value : '');
+      window.location.href = API.exportComplet + '?classe=' + encodeURIComponent(classe);
+    }
+
+    function exportCompletClasse() {
+      const classe = promptClasse();
+      if (classe === null) return;
+      exportComplet(classe);
+    }
+
+    function promptClasse() {
+      const classes = [...new Set(allSoumissions.map(s => s.classe).filter(Boolean))].sort();
+      if (!classes.length) { showToast('Aucune classe disponible', true); return null; }
+      const choix = prompt('Entrer le nom de la classe : ' + classes.join(', '));
+      if (!choix) return null;
+      if (!classes.includes(choix.trim())) { showToast('Classe introuvable : ' + choix, true); return null; }
+      return choix.trim();
+    }
+
+    function generatePDF(type) {
+      let url = `${API.pdf}/${type}?`;
+      if (type === 'sujet') {
+        url += `filiere=${document.getElementById('pdf-filiere').value}&version=${document.getElementById('pdf-version').value}`;
+      } else if (type === 'fiches') {
+        url += `classe=${document.getElementById('pdf-classe-ind').value}`;
+      } else if (type === 'recap') {
+        url += `classe=${document.getElementById('pdf-classe-recap').value}`;
+      }
+      window.open(url, '_blank');
+    }
+
+    async function refreshData() {
+      await loadDashboard();
+      await loadSoumissions();
+      showToast('🔄 Données actualisées');
+    }
+
+    // ── UTILS ─────────────────────────────────────────────────────
+    function showToast(msg, error = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.borderColor = error ? 'var(--danger)' : 'var(--success)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function escapeHtml(s) {
+      if (!s) return '';
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+  </script>
+</body>
+
+</html>
